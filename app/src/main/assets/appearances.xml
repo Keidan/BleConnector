@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  see https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.gap.appearance.xml
+  Appearance tags.
+  Tag name: 'IDX_' + The decimal value of the tag.
+     * Ex: Category 3 (Watch) = 3 << 6 = 192
+-->
+<appearances>
+    <IDX_0>Unknown</IDX_0>
+    <IDX_64>Generic Phone</IDX_64>
+    <IDX_128>Generic Computer</IDX_128>
+    <IDX_192>Generic Watch</IDX_192>
+    <IDX_193>Watch: Sports Watch</IDX_193>
+    <IDX_256>Generic Clock</IDX_256>
+    <IDX_320>Generic Display</IDX_320>
+    <IDX_384>Generic Remote Control</IDX_384>
+    <IDX_448>Generic Eye-glasses</IDX_448>
+    <IDX_512>Generic Tag</IDX_512>
+    <IDX_576>Generic Keyring</IDX_576>
+    <IDX_640>Generic Media Player</IDX_640>
+    <IDX_704>Generic Barcode Scanner</IDX_704>
+    <IDX_768>Generic Thermometer</IDX_768>
+    <IDX_769>Thermometer: Ear</IDX_769>
+    <IDX_832>Generic Heart rate Sensor</IDX_832>
+    <IDX_833>Heart Rate Sensor: Heart Rate Belt</IDX_833>
+    <IDX_896>Generic Blood Pressure</IDX_896>
+    <IDX_897>Blood Pressure: Arm</IDX_897>
+    <IDX_898>Blood Pressure: Wrist</IDX_898>
+    <IDX_960>Human Interface Device (HID)</IDX_960>
+    <IDX_961>Keyboard</IDX_961>
+    <IDX_962>Mouse</IDX_962>
+    <IDX_963>Joystick</IDX_963>
+    <IDX_964>Gamepad</IDX_964>
+    <IDX_965>Digitizer Tablet</IDX_965>
+    <IDX_966>Card Reader</IDX_966>
+    <IDX_967>Digital Pën</IDX_967>
+    <IDX_968>Barcode Scanner</IDX_968>
+    <IDX_1024>Generic Glucose Meter</IDX_1024>
+    <IDX_1088>Generic: Running Walking Sensor</IDX_1088>
+    <IDX_1089>Running Walking Sensor: In-Shoe</IDX_1089>
+    <IDX_1090>Running Walking Sensor: On-Shoe</IDX_1090>
+    <IDX_1091>Running Walking Sensor: On-Hip</IDX_1091>
+    <IDX_1152>Generic: Cycling</IDX_1152>
+    <IDX_1153>Cycling: Cycling Computer</IDX_1153>
+    <IDX_1154>Cycling: Speed Sensor</IDX_1154>
+    <IDX_1155>Cycling: Cadence Sensor</IDX_1155>
+    <IDX_1156>Cycling: Power Sensor</IDX_1156>
+    <IDX_1157>Cycling: Speed and Cadence Sensor</IDX_1157>
+    <IDX_3136>Generic: Pulse Oximeter</IDX_3136>
+    <IDX_3137>Fingertip</IDX_3137>
+    <IDX_3138>Wrist Worn</IDX_3138>
+    <IDX_3200>Generic: Weight Scale</IDX_3200>
+    <IDX_3264>Generic Personal Mobility Device</IDX_3264>
+    <IDX_3265>Powered Wheelchair</IDX_3265>
+    <IDX_3266>Mobility Scooter</IDX_3266>
+    <IDX_3328>Generic Continuous Glucose Monitor</IDX_3328>
+    <IDX_3392>Generic Insulin Pump</IDX_3392>
+    <IDX_3393>Insulin Pump, durable pump</IDX_3393>
+    <IDX_3396>Insulin Pump, patch pump</IDX_3396>
+    <IDX_3399>Insulin Pen</IDX_3399>
+    <IDX_3456>Generic Medication Delivery</IDX_3456>
+    <IDX_5184>Generic: Outdoor Sports Activity</IDX_5184>
+    <IDX_5185>Location Display Device</IDX_5185>
+    <IDX_5186>Location and Navigation Display Device</IDX_5186>
+    <IDX_5187>Location Pod</IDX_5187>
+    <IDX_5188>Location and Navigation Pod</IDX_5188>
+</appearances>
