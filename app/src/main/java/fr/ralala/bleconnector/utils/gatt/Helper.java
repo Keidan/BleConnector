@@ -11,16 +11,35 @@ import java.util.Locale;
  * <p>
  *******************************************************************************/
 public class Helper {
-  public static int toU8(byte b) {
+  static int toU8(byte b) {
     return b & 0xFF;
   }
-
+  static int toU16(byte [] b) {
+    return (toU8(b[0]) | toU8(b[1]) << 8);
+  }
+  static int toU16(byte b1, byte b2) {
+    return toU16(new byte[] { b1, b2 });
+  }
+  static int toU32(byte [] b) {
+    switch (b.length) {
+      case 1:
+        return toU8(b[0]);
+      case 2:
+        return toU16(b);
+      case 3:
+        return (toU8(b[0]) | toU8(b[1]) << 8 | toU8(b[2]) << 16);
+      case 4:
+        return (toU8(b[0]) | toU8(b[1]) << 8 | toU8(b[2]) << 16 | toU8(b[3]) << 24);
+      default:
+        return 0;
+    }
+  }
   /**
    * Converts the input byte array to string.
    * @param bytes Bytes array.
    * @return int
    */
-  public static String bytesToString(byte[] bytes) {
+  static String bytesToString(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
     for (byte b : bytes)
       sb.append((b >= 0x20 && b < 0x7F) ? (char) b : '.');
@@ -32,7 +51,7 @@ public class Helper {
    * @param bytes Bytes array.
    * @return String hex (eg: 0x00 0x01)
    */
-  public static String bytesToHex(byte[] bytes) {
+  private static String bytesToHex(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
     for (byte b : bytes)
       sb.append(String.format(Locale.US, "0x%02x ", b));
@@ -40,26 +59,11 @@ public class Helper {
   }
 
   /**
-   * Converts the input byte array to int.
-   * @param bytes Bytes array.
-   * @return int
-   */
-  public static int bytesToInt(byte[] bytes) {
-    int val = 0;
-    if(bytes.length>4) throw new RuntimeException("Too big to fit in int");
-    for (byte b : bytes) {
-      val=val<<8;
-      val=val|(b & 0xFF);
-    }
-    return val;
-  }
-
-  /**
    * Test if the array contains anything other than zeros.
    * @param bytes Bytes array.
    * @return boolean
    */
-  public static boolean isNonZeroArray(byte [] bytes) {
+  private static boolean isNonZeroArray(byte [] bytes) {
     for(byte b : bytes)
       if(b != 0)
         return true;
@@ -71,7 +75,7 @@ public class Helper {
    * @param bytes Bytes array.
    * @return String\nHex
    */
-  public static String decodeStringAndHex(byte [] bytes) {
+  static String decodeStringAndHex(byte [] bytes) {
     if(isNonZeroArray(bytes))
       return bytesToHex(bytes) + "\n" + bytesToString(bytes);
     else
@@ -83,7 +87,7 @@ public class Helper {
    * @param bytes Bytes array.
    * @return nHex
    */
-  public static String decodeHex(byte [] bytes) {
+  static String decodeHex(byte [] bytes) {
     if(isNonZeroArray(bytes))
       return bytesToHex(bytes);
     else

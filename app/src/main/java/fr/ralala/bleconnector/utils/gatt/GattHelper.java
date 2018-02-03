@@ -16,8 +16,9 @@ import fr.ralala.bleconnector.BleConnectorApplication;
 import fr.ralala.bleconnector.R;
 
 import static fr.ralala.bleconnector.utils.gatt.Helper.toU8;
+import static fr.ralala.bleconnector.utils.gatt.Helper.toU16;
+import static fr.ralala.bleconnector.utils.gatt.Helper.toU32;
 import static fr.ralala.bleconnector.utils.gatt.Helper.bytesToString;
-import static fr.ralala.bleconnector.utils.gatt.Helper.bytesToInt;
 import static fr.ralala.bleconnector.utils.gatt.Helper.decodeStringAndHex;
 import static fr.ralala.bleconnector.utils.gatt.Helper.decodeHex;
 
@@ -124,13 +125,13 @@ public class GattHelper {
           uuid.equals(GattUUID.CHARACTERISTIC_HEART_RATE_MEASUREMENT.toString()) ||
           uuid.equals(GattUUID.CHARACTERISTIC_BODY_SENSOR_LOCATION.toString()) ||
           uuid.equals(GattUUID.CHARACTERISTIC_HEART_RATE_CONTROL_POINT.toString())) {
-        data = String.format(Locale.US, "%02d ", bytesToInt(bytes));
+        data = String.format(Locale.US, "%02d ", toU32(bytes));
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_ALTITUDE.toString()) ||
           uuid.equals(GattUUID.CHARACTERISTIC_LONGITUDE.toString())) {
-        data = String.valueOf(toU8(bytes[0]) | toU8(bytes[1]) << 8);
+        data = String.valueOf(toU16(bytes[0], bytes[1]));
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_APPEARANCE.toString())) {
         Context c = BleConnectorApplication.getInstance();
-        int n = toU8(bytes[0]) | toU8(bytes[1]) << 8;
+        int n = toU16(bytes[0], bytes[1]);
         String ap = mAppearances.get(n);
         data = ap != null ? ap : c.getString(R.string.ble_appearance_unsupported);
         data += "("+n+")";
@@ -150,19 +151,19 @@ public class GattHelper {
           data = c.getString(R.string.pnp_id_vendor_id_source) + ": ";
           if (toU8(bytes[0]) == 1) {
             data += "Bluetooth\n";
-            data += c.getString(R.string.pnp_id_vendor_id) + ": " + (toU8(bytes[1]) | toU8(bytes[2]) << 8) + "\n";
+            data += c.getString(R.string.pnp_id_vendor_id) + ": " + (toU16(bytes[1], bytes[2])) + "\n";
           } else {
             data += "USB\n";
-            String str = UsbVendorName.VALUES.get(toU8(bytes[1]) | toU8(bytes[2]) << 8);
+            String str = UsbVendorName.VALUES.get(toU16(bytes[1], bytes[2]));
             data += c.getString(R.string.pnp_id_vendor_id) + ": " + (str == null ? c.getString(R.string.unknown) : str) + "\n";
           }
-          data += c.getString(R.string.pnp_id_product_id) + ": " + (toU8(bytes[3]) | toU8(bytes[4]) << 8) + "\n";
-          data += c.getString(R.string.pnp_id_product_version) + ": " + (toU8(bytes[5]) | toU8(bytes[6]) << 8);
+          data += c.getString(R.string.pnp_id_product_id) + ": " + (toU16(bytes[3], bytes[4])) + "\n";
+          data += c.getString(R.string.pnp_id_product_version) + ": " + (toU16(bytes[5], bytes[6]));
         } else
           data = decodeStringAndHex(bytes);
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_PERIPHERAL_PRIVACY_FLAG.toString())) {
         Context c = BleConnectorApplication.getInstance();
-        int n = bytesToInt(bytes);
+        int n = toU32(bytes);
         if(n == 0)
           data = c.getString(R.string.disabled);
         else if(n == 1)
@@ -171,7 +172,7 @@ public class GattHelper {
           data = decodeStringAndHex(bytes);
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_CENTRAL_ADDRESS_RESOLUTION.toString())) {
         Context c = BleConnectorApplication.getInstance();
-        int n = bytesToInt(bytes);
+        int n = toU32(bytes);
         if(n == 0)
           data = c.getString(R.string.supported);
         else if(n == 1)
@@ -181,15 +182,15 @@ public class GattHelper {
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS.toString())) {
         Context c = BleConnectorApplication.getInstance();
         if(bytes.length >= 8) {
-          data = c.getString(R.string.ppcp_min_connection_interval) + ": " + ((toU8(bytes[0]) | toU8(bytes[1]) << 8) * 1.25) + "ms\n";
-          data += c.getString(R.string.ppcp_max_connection_interval) + ": " + ((toU8(bytes[2]) | toU8(bytes[3]) << 8) * 1.25) + "ms\n";
-          data += c.getString(R.string.ppcp_slave_latency) + ": " + (toU8(bytes[4]) | toU8(bytes[5]) << 8) + "ms\n";
-          data += c.getString(R.string.ppcp_connection_supervision_timeout_multiplier) + ": " + (toU8(bytes[6]) | toU8(bytes[7]) << 8);
+          data = c.getString(R.string.ppcp_min_connection_interval) + ": " + ((toU16(bytes[0], bytes[1])) * 1.25) + "ms\n";
+          data += c.getString(R.string.ppcp_max_connection_interval) + ": " + ((toU16(bytes[2], bytes[3])) * 1.25) + "ms\n";
+          data += c.getString(R.string.ppcp_slave_latency) + ": " + (toU16(bytes[4], bytes[5])) + "ms\n";
+          data += c.getString(R.string.ppcp_connection_supervision_timeout_multiplier) + ": " + (toU16(bytes[6], bytes[7]));
         } else
           data = decodeStringAndHex(bytes);
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_ALERT_LEVEL.toString())) {
         Context c = BleConnectorApplication.getInstance();
-        int n = bytesToInt(bytes);
+        int n = toU32(bytes);
         if(n == 0) {
           data = c.getString(R.string.alert_level_no);
         } else if(n == 1) {
@@ -201,8 +202,8 @@ public class GattHelper {
       } else if(uuid.equals(GattUUID.CHARACTERISTIC_SERVICE_CHANGED.toString())) {
         Context c = BleConnectorApplication.getInstance();
         if(bytes.length >= 4) {
-          data = c.getString(R.string.start_of_affected_attribute_handle_range) + ": " + (toU8(bytes[0]) | toU8(bytes[1]) << 8) + "\n";
-          data += c.getString(R.string.end_of_affected_attribute_handle_range) + ": " + (toU8(bytes[2]) | toU8(bytes[3]) << 8);
+          data = c.getString(R.string.start_of_affected_attribute_handle_range) + ": " + (toU16(bytes[0], bytes[1])) + "\n";
+          data += c.getString(R.string.end_of_affected_attribute_handle_range) + ": " + (toU16(bytes[2], bytes[3]));
         } else
           data = decodeStringAndHex(bytes);
       } else
