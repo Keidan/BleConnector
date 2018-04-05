@@ -1,0 +1,6 @@
+{
+  "name": "RX Characteristic",
+  "format": "hex",
+  "direction": "normal",
+  "split": 1
+}

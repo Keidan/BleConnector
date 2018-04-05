@@ -5,17 +5,23 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import fr.ralala.bleconnector.BleConnectorApplication;
 import fr.ralala.bleconnector.R;
 
-import static fr.ralala.bleconnector.utils.gatt.Helper.toU8;
 import static fr.ralala.bleconnector.utils.gatt.Helper.toU16;
 import static fr.ralala.bleconnector.utils.gatt.Helper.toU32;
 import static fr.ralala.bleconnector.utils.gatt.Helper.bytesToString;
@@ -32,183 +38,135 @@ import static fr.ralala.bleconnector.utils.gatt.Helper.decodeHex;
  *******************************************************************************/
 public class GattHelper {
   private static final String APPEARANCE_XML_NAME = "appearances.xml";
-
-  private static final HashMap<String, GattUUID.ItemService> mAttributes = new HashMap<>();
+  private static final String CHARACTERISTICS_FOLDER = "characteristics";
+  private static final String SERVICES_FOLDER = "services";
+  private static final String JSON_FILE_EXTENSION = ".json";
   private static final SparseArray<String> mAppearances = new SparseArray<>();
-
-  static {
-    /* managed services */
-    mAttributes.put(GattUUID.SERVICE_GENERIC_ACCESS.uuid, GattUUID.SERVICE_GENERIC_ACCESS);
-    mAttributes.put(GattUUID.SERVICE_GENERIC_ATTRIBUTE.uuid, GattUUID.SERVICE_GENERIC_ATTRIBUTE);
-    mAttributes.put(GattUUID.SERVICE_IMMEDIATE_ALERT.uuid, GattUUID.SERVICE_IMMEDIATE_ALERT);
-    mAttributes.put(GattUUID.SERVICE_LINK_LOSS.uuid, GattUUID.SERVICE_LINK_LOSS);
-    mAttributes.put(GattUUID.SERVICE_CURRENT_TIME.uuid, GattUUID.SERVICE_CURRENT_TIME);
-    mAttributes.put(GattUUID.SERVICE_DEVICE_INFORMATION.uuid, GattUUID.SERVICE_DEVICE_INFORMATION);
-    mAttributes.put(GattUUID.SERVICE_USER_DATA.uuid, GattUUID.SERVICE_USER_DATA);
-    mAttributes.put(GattUUID.SERVICE_HEART_RATE_SENSOR.uuid, GattUUID.SERVICE_HEART_RATE_SENSOR);
-    mAttributes.put(GattUUID.SERVICE_BATTERY.uuid, GattUUID.SERVICE_BATTERY);
-    mAttributes.put(GattUUID.SERVICE_NORDIC_UART.uuid, GattUUID.SERVICE_NORDIC_UART);
-
-    /* managed characteristics */
-    mAttributes.put(GattUUID.CHARACTERISTIC_DESCRIPTOR.uuid, GattUUID.CHARACTERISTIC_DESCRIPTOR);
-    mAttributes.put(GattUUID.CHARACTERISTIC_DEVICE_NAME.uuid, GattUUID.CHARACTERISTIC_DEVICE_NAME);
-    mAttributes.put(GattUUID.CHARACTERISTIC_APPEARANCE.uuid, GattUUID.CHARACTERISTIC_APPEARANCE);
-    mAttributes.put(GattUUID.CHARACTERISTIC_PERIPHERAL_PRIVACY_FLAG.uuid, GattUUID.CHARACTERISTIC_PERIPHERAL_PRIVACY_FLAG);
-    mAttributes.put(GattUUID.CHARACTERISTIC_RECONNECTION_ADDRESS.uuid, GattUUID.CHARACTERISTIC_RECONNECTION_ADDRESS);
-    mAttributes.put(GattUUID.CHARACTERISTIC_PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS.uuid, GattUUID.CHARACTERISTIC_PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS);
-    mAttributes.put(GattUUID.CHARACTERISTIC_SERVICE_CHANGED.uuid, GattUUID.CHARACTERISTIC_SERVICE_CHANGED);
-    mAttributes.put(GattUUID.CHARACTERISTIC_ALERT_LEVEL.uuid, GattUUID.CHARACTERISTIC_ALERT_LEVEL);
-    mAttributes.put(GattUUID.CHARACTERISTIC_LOCAL_TIME_INFORMATION.uuid, GattUUID.CHARACTERISTIC_LOCAL_TIME_INFORMATION);
-    mAttributes.put(GattUUID.CHARACTERISTIC_BATTERY_LEVEL.uuid, GattUUID.CHARACTERISTIC_BATTERY_LEVEL);
-    mAttributes.put(GattUUID.CHARACTERISTIC_SYSTEM_ID.uuid, GattUUID.CHARACTERISTIC_SYSTEM_ID);
-    mAttributes.put(GattUUID.CHARACTERISTIC_MODEL_NUMBER_STRING.uuid, GattUUID.CHARACTERISTIC_MODEL_NUMBER_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_SERIAL_NUMBER_STRING.uuid, GattUUID.CHARACTERISTIC_SERIAL_NUMBER_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_FIRMWARE_NUMBER_STRING.uuid, GattUUID.CHARACTERISTIC_FIRMWARE_NUMBER_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_HARDWARE_REVISION_STRING.uuid, GattUUID.CHARACTERISTIC_HARDWARE_REVISION_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_SOFTWARE_REVISION_STRING.uuid, GattUUID.CHARACTERISTIC_SOFTWARE_REVISION_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_MANUFACTURER_NAME_STRING.uuid, GattUUID.CHARACTERISTIC_MANUFACTURER_NAME_STRING);
-    mAttributes.put(GattUUID.CHARACTERISTIC_DATA_LIST.uuid, GattUUID.CHARACTERISTIC_DATA_LIST);
-    mAttributes.put(GattUUID.CHARACTERISTIC_CURRENT_TIME.uuid, GattUUID.CHARACTERISTIC_CURRENT_TIME);
-    mAttributes.put(GattUUID.CHARACTERISTIC_HEART_RATE_MEASUREMENT.uuid, GattUUID.CHARACTERISTIC_HEART_RATE_MEASUREMENT);
-    mAttributes.put(GattUUID.CHARACTERISTIC_BODY_SENSOR_LOCATION.uuid, GattUUID.CHARACTERISTIC_BODY_SENSOR_LOCATION);
-    mAttributes.put(GattUUID.CHARACTERISTIC_HEART_RATE_CONTROL_POINT.uuid, GattUUID.CHARACTERISTIC_HEART_RATE_CONTROL_POINT);
-    mAttributes.put(GattUUID.CHARACTERISTIC_PNP_ID.uuid, GattUUID.CHARACTERISTIC_PNP_ID);
-    mAttributes.put(GattUUID.CHARACTERISTIC_AGE.uuid, GattUUID.CHARACTERISTIC_AGE);
-    mAttributes.put(GattUUID.CHARACTERISTIC_FIRST_NAME.uuid, GattUUID.CHARACTERISTIC_FIRST_NAME);
-    mAttributes.put(GattUUID.CHARACTERISTIC_GENDER.uuid, GattUUID.CHARACTERISTIC_GENDER);
-    mAttributes.put(GattUUID.CHARACTERISTIC_LAST_NAME.uuid, GattUUID.CHARACTERISTIC_LAST_NAME);
-    mAttributes.put(GattUUID.CHARACTERISTIC_LANGUAGE.uuid, GattUUID.CHARACTERISTIC_LANGUAGE);
-    mAttributes.put(GattUUID.CHARACTERISTIC_CENTRAL_ADDRESS_RESOLUTION.uuid, GattUUID.CHARACTERISTIC_CENTRAL_ADDRESS_RESOLUTION);
-    mAttributes.put(GattUUID.CHARACTERISTIC_LONGITUDE.uuid, GattUUID.CHARACTERISTIC_LONGITUDE);
-    mAttributes.put(GattUUID.CHARACTERISTIC_ALTITUDE.uuid, GattUUID.CHARACTERISTIC_ALTITUDE);
-    mAttributes.put(GattUUID.CHARACTERISTIC_NORDIC_TX.uuid, GattUUID.CHARACTERISTIC_NORDIC_TX);
-    mAttributes.put(GattUUID.CHARACTERISTIC_NORDIC_RX.uuid, GattUUID.CHARACTERISTIC_NORDIC_RX);
-  }
+  private static final HashMap<String, String> mCharacteristics = new HashMap<>();
+  private static final HashMap<String, String> mServices= new HashMap<>();
 
   public GattHelper loadFromAssets() {
+    mCharacteristics.clear();
+    mServices.clear();
     loadAppearance();
+    listFilesJSON(CHARACTERISTICS_FOLDER, mCharacteristics);
+    listFilesJSON(SERVICES_FOLDER, mServices);
     return this;
   }
 
   /**
-   * Converts the byte data to readable string.
+   * Converts the byte data to a readable string.
    * @param uuid Associated uuid.
    * @param bytes bytes to convert.
    * @return Readable string.
    */
   public String convert(String uuid, byte [] bytes) {
-    GattUUID.ItemService item = mAttributes.get(uuid);
-    String data;
-    if(item == null)
-      data = decodeStringAndHex(bytes);
-    else {
-      if(uuid.equals(GattUUID.CHARACTERISTIC_DESCRIPTOR.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_RECONNECTION_ADDRESS.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_LOCAL_TIME_INFORMATION.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_CURRENT_TIME.toString())) {
-        data = decodeHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_DEVICE_NAME.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_MODEL_NUMBER_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_SERIAL_NUMBER_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_FIRMWARE_NUMBER_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_HARDWARE_REVISION_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_SOFTWARE_REVISION_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_MANUFACTURER_NAME_STRING.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_DATA_LIST.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_FIRST_NAME.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_GENDER.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_LANGUAGE.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_LAST_NAME.toString())) {
-        data = bytesToString(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_AGE.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_BATTERY_LEVEL.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_HEART_RATE_MEASUREMENT.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_BODY_SENSOR_LOCATION.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_HEART_RATE_CONTROL_POINT.toString())) {
-        data = String.format(Locale.US, "%02d ", toU32(bytes));
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_ALTITUDE.toString()) ||
-          uuid.equals(GattUUID.CHARACTERISTIC_LONGITUDE.toString())) {
-        data = String.valueOf(toU16(bytes[0], bytes[1]));
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_APPEARANCE.toString())) {
+    String data = "";
+    String file = mCharacteristics.get(uuid.toLowerCase());
+    if(file != null) {
+      InputStream is = null;
+      try {
         Context c = BleConnectorApplication.getInstance();
-        int n = toU16(bytes[0], bytes[1]);
-        String ap = mAppearances.get(n);
-        data = ap != null ? ap : c.getString(R.string.ble_appearance_unsupported);
-        data += "("+n+")";
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_SYSTEM_ID.toString())) {
-        if(bytes.length >= 8) {
-          Context c = BleConnectorApplication.getInstance();
-          data = c.getString(R.string.system_id_manufacturer_identifier) + ": " +
-              String.format(Locale.US, "%02x %02x %02x %02x %02x",
-                  toU8(bytes[4]), toU8(bytes[3]), toU8(bytes[2]), toU8(bytes[1]), toU8(bytes[0])) + "\n";
-          data +=  c.getString(R.string.system_id_organizationally_unique_identifier) + ": " +
-              String.format(Locale.US, "%02x %02x %02x", toU8(bytes[7]), toU8(bytes[6]), toU8(bytes[5]));
-        } else
-          data = decodeStringAndHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_PNP_ID.toString())) {
-        if (bytes.length >= 7) {
-          Context c = BleConnectorApplication.getInstance();
-          data = c.getString(R.string.pnp_id_vendor_id_source) + ": ";
-          if (toU8(bytes[0]) == 1) {
-            data += "Bluetooth\n";
-            data += c.getString(R.string.pnp_id_vendor_id) + ": " + (toU16(bytes[1], bytes[2])) + "\n";
-          } else {
-            data += "USB\n";
-            String str = UsbVendorName.VALUES.get(toU16(bytes[1], bytes[2]));
-            data += c.getString(R.string.pnp_id_vendor_id) + ": " + (str == null ? c.getString(R.string.unknown) : str) + "\n";
+        is = c.getAssets().open(file);
+        JSONObject object = new JSONObject(read(is));
+        String format = object.getString("format");
+        String unit = object.has("unit") ? (" " + object.getString("unit")) : "";
+        switch (format) {
+          case "string":
+            data = bytesToString(bytes) + unit;
+            break;
+          case "u32":
+            data = String.format(Locale.US, "%02d ", toU32(bytes)) + unit;
+            break;
+          case "u16":
+            data = String.format(Locale.US, "%02d ", toU16(bytes[0], bytes[1])) + unit;
+            break;
+          case "enum":
+            data = getEnumJSON(object, bytes) + unit;
+            break;
+          case "hex":
+            data = getHexJSON(object, bytes) + unit;
+            break;
+          case "appearance":
+            int n = toU16(bytes[0], bytes[1]);
+            String ap = mAppearances.get(n);
+            data = ap != null ? ap : c.getString(R.string.ble_appearance_unsupported);
+            data += "("+n+")";
+            break;
+          case "bits": {
+            if(object.has("bits")) {
+              JSONArray array = object.getJSONArray("bits");
+              if(array != null) {
+                StringBuilder sbData = new StringBuilder();
+                boolean usb_PnP_found = false;
+                for (int i = 0; i < array.length(); i++) {
+                  JSONObject o = array.getJSONObject(i);
+                  String name = o.getString("name");
+                  unit = o.has("unit") ? (" " + o.getString("unit")) : "";
+                  int start = o.getInt("start");
+                  int length = o.getInt("length");
+                  String fmt = o.getString("format");
+                  String direction = object.has("direction") ? object.getString("direction") : "normal";
+                  sbData.append(name).append(": ");
+                  switch (fmt) {
+                    case "enum": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      String s = getEnumJSON(o, bs);
+                      if(s.equals("USB") && uuid.equals("00002a50-0000-1000-8000-00805f9b34fb"))
+                        usb_PnP_found = true;
+                      sbData.append(s);
+                      break;
+                    }
+                    case "u16": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      if(usb_PnP_found && start == 1 && length == 2) {
+                        usb_PnP_found = false;
+                        String str = UsbVendorName.VALUES.get(toU16(bs[0], bs[1]));
+                        sbData.append((str == null ? c.getString(R.string.unknown) : str));
+                      } else
+                        sbData.append(String.format(Locale.US, "%02d", (direction.equals("normal")) ?
+                            toU16(bs[0], bs[1]) : toU16(bs[1], bs[0]))).append(unit);
+                      break;
+                    }
+                    case "u16_time": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      int u16 = (int)((direction.equals("normal") ?
+                          toU16(bs[0], bs[1]) : toU16(bs[1], bs[0])) * 1.25);
+                      sbData.append(String.format(Locale.US, "%02d", u16)).append(unit);
+                      break;
+                    }
+                    case "hex": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      sbData.append(getHexJSON(o, bs)).append(unit);
+                      break;
+                    }
+                  }
+                  if(i < array.length() - 1)
+                    sbData.append("\n");
+                }
+                data = sbData.toString();
+              } else
+                data = decodeStringAndHex(bytes);
+            } else
+              data = decodeStringAndHex(bytes);
+            break;
           }
-          data += c.getString(R.string.pnp_id_product_id) + ": " + (toU16(bytes[3], bytes[4])) + "\n";
-          data += c.getString(R.string.pnp_id_product_version) + ": " + (toU16(bytes[5], bytes[6]));
-        } else
-          data = decodeStringAndHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_PERIPHERAL_PRIVACY_FLAG.toString())) {
-        Context c = BleConnectorApplication.getInstance();
-        int n = toU32(bytes);
-        if(n == 0)
-          data = c.getString(R.string.disabled);
-        else if(n == 1)
-          data = c.getString(R.string.enabled);
-        else
-          data = decodeStringAndHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_CENTRAL_ADDRESS_RESOLUTION.toString())) {
-        Context c = BleConnectorApplication.getInstance();
-        int n = toU32(bytes);
-        if(n == 0)
-          data = c.getString(R.string.supported);
-        else if(n == 1)
-          data = c.getString(R.string.not_supported);
-        else
-          data = c.getString(R.string.na);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_PERIPHERAL_PREFERRED_CONNECTION_PARAMETERS.toString())) {
-        Context c = BleConnectorApplication.getInstance();
-        if(bytes.length >= 8) {
-          data = c.getString(R.string.ppcp_min_connection_interval) + ": " + ((toU16(bytes[0], bytes[1])) * 1.25) + "ms\n";
-          data += c.getString(R.string.ppcp_max_connection_interval) + ": " + ((toU16(bytes[2], bytes[3])) * 1.25) + "ms\n";
-          data += c.getString(R.string.ppcp_slave_latency) + ": " + (toU16(bytes[4], bytes[5])) + "ms\n";
-          data += c.getString(R.string.ppcp_connection_supervision_timeout_multiplier) + ": " + (toU16(bytes[6], bytes[7]));
-        } else
-          data = decodeStringAndHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_ALERT_LEVEL.toString())) {
-        Context c = BleConnectorApplication.getInstance();
-        int n = toU32(bytes);
-        if(n == 0) {
-          data = c.getString(R.string.alert_level_no);
-        } else if(n == 1) {
-          data = c.getString(R.string.alert_level_medium);
-        } else if(n == 2) {
-          data = c.getString(R.string.alert_level_high);
-        } else
-          data = decodeStringAndHex(bytes);
-      } else if(uuid.equals(GattUUID.CHARACTERISTIC_SERVICE_CHANGED.toString())) {
-        Context c = BleConnectorApplication.getInstance();
-        if(bytes.length >= 4) {
-          data = c.getString(R.string.start_of_affected_attribute_handle_range) + ": " + (toU16(bytes[0], bytes[1])) + "\n";
-          data += c.getString(R.string.end_of_affected_attribute_handle_range) + ": " + (toU16(bytes[2], bytes[3]));
-        } else
-          data = decodeStringAndHex(bytes);
-      } else
-        data = decodeStringAndHex(bytes);
-    }
+          default:
+            data = decodeStringAndHex(bytes);
+            break;
+        }
+      } catch (Exception e) {
+        Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
+      } finally {
+        try {
+          if(is != null)
+            is.close();
+        } catch (IOException ie) {
+          Log.e(getClass().getSimpleName(), "IOException: " + ie.getMessage(), ie);
+        }
+      }
+    } else
+      data = decodeStringAndHex(bytes);
     return data;
   }
 
@@ -216,11 +174,31 @@ public class GattHelper {
    * Lookups uuid to name.
    * @param uuid UUID to search.
    * @param defaultName Default name to use if not found.
+   * @param isService True if the UUID match with a service UUID.
    * @return The name of the default name.
    */
-  public String lookup(String uuid, String defaultName) {
-    GattUUID.ItemService item =  mAttributes.get(uuid);
-    return item == null || item.name == null ? defaultName : item.name;
+  public String lookup(String uuid, String defaultName, boolean isService) {
+    final String lc_uuid = uuid.toLowerCase();
+    String file = isService ? mServices.get(lc_uuid) : mCharacteristics.get(lc_uuid);
+    String name = null;
+    if(file != null) {
+      InputStream is = null;
+      try {
+        is = BleConnectorApplication.getInstance().getAssets().open(file);
+        JSONObject object = new JSONObject(read(is));
+        name = object.getString("name");
+      } catch (Exception e) {
+        Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
+      } finally {
+        try {
+          if(is != null)
+            is.close();
+        } catch (IOException ie) {
+          Log.e(getClass().getSimpleName(), "IOException: " + ie.getMessage(), ie);
+        }
+      }
+    }
+    return name == null ? defaultName : name;
   }
 
   public static String fixUUID(String uuid) {
@@ -276,5 +254,111 @@ public class GattHelper {
 
         }
     }
+  }
+
+  /**
+   * List JSON files from assets folder (or sub folder)
+   * @param path The root path.
+   * @param listFiles The output list [uuid, file_path]
+   * @return false on error.
+   */
+  private boolean listFilesJSON(String path, HashMap<String, String> listFiles) {
+    try {
+      String [] list = BleConnectorApplication.getInstance().getAssets().list(path);
+      if (list.length > 0) {
+        // This is a folder
+        for (String file : list) {
+          if (!listFilesJSON(path + "/" + file, listFiles))
+            return false;
+          else {
+            if(file.endsWith(JSON_FILE_EXTENSION)) {
+              String uuid = file.substring(0, file.length() - JSON_FILE_EXTENSION.length()).toLowerCase();
+              if(Pattern.matches("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", uuid)) {
+                listFiles.put(uuid, path + "/" + file);
+              } else
+                Log.e(getClass().getSimpleName(), "listFilesJSON: Invalid json UUID name: '" + file + "'");
+            } else
+              Log.e(getClass().getSimpleName(), "listFilesJSON: File ignored: '" + file + "'");
+          }
+        }
+      }
+    } catch (IOException e) {
+      Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
+  }
+
+  private static String read(InputStream input) throws IOException {
+    try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
+      return buffer.lines().collect(Collectors.joining("\n"));
+    }
+  }
+
+  /**
+   * Decodes the enum format.
+   * @param object Current JSON object.
+   * @param bytes Input bytes (from BLE).
+   * @return The enum in string.
+   * @throws Exception If an error occurs.
+   */
+  private String getEnumJSON(JSONObject object, byte [] bytes) throws Exception {
+    String data = "";
+    String defval = object.has("defval") ? object.getString("defval") : "ERROR";
+    JSONArray array = object.has("enum") ? object.getJSONArray("enum") : null;
+    if (array != null) {
+      int n = toU32(bytes);
+      for (int i = 0; i < array.length(); i++) {
+        JSONObject o = array.getJSONObject(i);
+        try {
+          String name = o.getString("name");
+          String value = o.getString("value");
+          if (n == Integer.parseInt(value)) {
+            data = name;
+            break;
+          }
+        } catch (Exception e) {
+          data = defval;
+          break;
+        }
+      }
+      if(data.isEmpty())
+        data = defval;
+    } else
+      data = decodeStringAndHex(bytes);
+    return data;
+  }
+
+  /**
+   * Decodes the hex format.
+   * @param object Current JSON object.
+   * @param bytes Input bytes (from BLE).
+   * @return The hex in string.
+   * @throws Exception If an error occurs.
+   */
+  private String getHexJSON(JSONObject object, byte [] bytes) throws Exception {
+    String data;
+    String direction = object.has("direction") ? object.getString("direction") : "normal";
+    int split = object.has("split") ? object.getInt("split") : 0;
+    if(split == 0) {
+      data = decodeHex(bytes, !direction.equals("normal"));
+    } else {
+      data = decodeHex(bytes, !direction.equals("normal")).replaceAll("0x", "");
+    }
+    return data;
+  }
+
+  /**
+   * Copy bytes from one array to another.
+   * @param bytes Input array.
+   * @param length Number of bytes to copy.
+   * @param start Start position.
+   * @return New array.
+   */
+  private byte[] copyBytes(byte [] bytes, int length, int start) {
+    byte bs[] = new byte[length];
+    for(int k = 0, j = start; j < start + length; k++, j++)
+      bs[k] = bytes[j];
+    return bs;
   }
 }

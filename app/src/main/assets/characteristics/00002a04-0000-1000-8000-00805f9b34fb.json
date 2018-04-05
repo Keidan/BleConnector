@@ -1,0 +1,33 @@
+{
+  "name": "Peripheral Preferred Connection Parameters",
+  "format": "bits",
+  "bits": [
+    {
+      "name": "Minimum Connection Interval",
+      "start": 0,
+      "length": 2,
+      "format": "u16_time",
+      "unit": "ms"
+    },
+    {
+      "name": "Maximum Connection Interval",
+      "start": 2,
+      "length": 2,
+      "format": "u16_time",
+      "unit": "ms"
+    },
+    {
+      "name": "Slave Latency",
+      "start": 4,
+      "length": 2,
+      "format": "u16",
+      "unit": "ms"
+    },
+    {
+      "name": "Connection Supervision Timeout Multiplier",
+      "start": 6,
+      "length": 2,
+      "format": "u16"
+    }
+  ]
+}

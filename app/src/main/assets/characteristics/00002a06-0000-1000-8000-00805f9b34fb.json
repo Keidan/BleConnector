@@ -1,0 +1,19 @@
+{
+  "name": "Alert Level",
+  "format": "enum",
+  "defval": "Error",
+  "enum": [
+    {
+      "name": "No",
+      "value": "0"
+    },
+    {
+      "name": "Medium",
+      "value": "1"
+    },
+    {
+      "name": "High",
+      "value": "2"
+    }
+  ]
+}

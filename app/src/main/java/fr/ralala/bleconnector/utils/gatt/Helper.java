@@ -49,12 +49,17 @@ public class Helper {
   /**
    * Converts the input byte array to string hex.
    * @param bytes Bytes array.
+   * @param revert Revert the output.
    * @return String hex (eg: 0x00 0x01)
    */
-  private static String bytesToHex(byte[] bytes) {
+  private static String bytesToHex(byte[] bytes, boolean revert) {
     StringBuilder sb = new StringBuilder();
-    for (byte b : bytes)
-      sb.append(String.format(Locale.US, "0x%02x ", b));
+    if(!revert)
+      for (byte b : bytes)
+        sb.append(String.format(Locale.US, "0x%02x ", toU8(b)));
+    else
+      for(int i = bytes.length - 1; i >= 0; i--)
+        sb.append(String.format(Locale.US, "0x%02x ", toU8(bytes[i])));
     return sb.toString();
   }
 
@@ -77,7 +82,7 @@ public class Helper {
    */
   static String decodeStringAndHex(byte [] bytes) {
     if(isNonZeroArray(bytes))
-      return bytesToHex(bytes) + "\n" + bytesToString(bytes);
+      return bytesToHex(bytes, false) + "\n" + bytesToString(bytes);
     else
       return "0x00";
   }
@@ -85,11 +90,12 @@ public class Helper {
   /**
    * Decodes the input array as hex value.
    * @param bytes Bytes array.
+   * @param revert Revert the output.
    * @return nHex
    */
-  static String decodeHex(byte [] bytes) {
+  static String decodeHex(byte [] bytes, boolean revert) {
     if(isNonZeroArray(bytes))
-      return bytesToHex(bytes);
+      return bytesToHex(bytes, revert);
     else
       return "0x00";
   }

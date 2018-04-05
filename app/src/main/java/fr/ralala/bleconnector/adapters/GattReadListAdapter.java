@@ -120,7 +120,7 @@ public class GattReadListAdapter extends ArrayAdapter<GattReadListAdapter.Item> 
     if (o != null) {
       String uuid = o.characteristic.getUuid().toString();
       holder.tvNameService.setText(o.srvName == null ? o.srvUUID : o.srvName);
-      holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic)));
+      holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic), false));
       holder.tvUUID.setText(GattHelper.fixUUID(uuid));
       byte [] bytes = o.characteristic.getValue();
       holder.tvData.setText(bytes == null ? "" : BleConnectorApplication.getInstance().getGattHelper().convert(uuid, bytes));

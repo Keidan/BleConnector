@@ -1,0 +1,15 @@
+{
+  "name": "Central Address Resolution",
+  "format": "enum",
+  "defval": "N/A",
+  "enum": [
+    {
+      "name": "Supported",
+      "value": "0"
+    },
+    {
+      "name": "Not supported",
+      "value": "1"
+    }
+  ]
+}

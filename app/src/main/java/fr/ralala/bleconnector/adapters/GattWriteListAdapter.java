@@ -123,7 +123,7 @@ public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item
     if (o != null) {
       String uuid = o.characteristic.getUuid().toString();
       holder.tvNameService.setText(o.srvName == null ? o.srvUUID : o.srvName);
-      holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic)));
+      holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic), false));
       holder.tvUUID.setText(GattHelper.fixUUID(uuid));
       if((o.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
         holder.trData.setVisibility(View.GONE);

@@ -1,0 +1,15 @@
+{
+  "name": "Peripheral Privacy Flag",
+  "format": "enum",
+  "defval": "Error",
+  "enum": [
+    {
+      "name": "Disabled",
+      "value": "0"
+    },
+    {
+      "name": "Enabled",
+      "value": "1"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "PnP ID",
+  "format": "bits",
+  "bits": [
+    {
+      "name": "Vendor ID Source",
+      "start": 0,
+      "length": 1,
+      "format": "enum",
+      "defval": "USB",
+      "enum": [
+        {
+          "name": "Bluetooth",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "name": "Vendor ID",
+      "start": 1,
+      "length": 2,
+      "format": "u16"
+    },
+    {
+      "name": "Product ID",
+      "start": 3,
+      "length": 2,
+      "format": "u16"
+    },
+    {
+      "name": "Product Version",
+      "start": 5,
+      "length": 2,
+      "format": "u16"
+    }
+  ]
+}

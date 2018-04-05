@@ -1,0 +1,6 @@
+{
+  "name": "TX Characteristic",
+  "format": "hex",
+  "direction": "normal",
+  "split": 1
+}

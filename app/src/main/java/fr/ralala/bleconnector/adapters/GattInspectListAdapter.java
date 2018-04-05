@@ -94,7 +94,7 @@ public class GattInspectListAdapter extends BaseExpandableListAdapter {
     }
     String uuid = child.getUuid().toString();
 
-    holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic)));
+    holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic), false));
     holder.tvUUID.setText(GattHelper.fixUUID(uuid));
     String properties;
     int prop = child.getProperties();
@@ -160,7 +160,7 @@ public class GattInspectListAdapter extends BaseExpandableListAdapter {
     }
 
     String uuid = header.getUuid().toString();
-    holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_service)));
+    holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_service), true));
     holder.tvUUID.setText(GattHelper.fixUUID(uuid));
     return convertView;
   }

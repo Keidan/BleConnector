@@ -70,7 +70,7 @@ public class GattReadFragment extends GattGenericFragment {
     List<BluetoothGattService> services = mActivity.getBluetoothGatt().getServices();
     for(BluetoothGattService service : services) {
       String srvUUID = service.getUuid().toString();
-      String srvName = BleConnectorApplication.getInstance().getGattHelper().lookup(srvUUID, null);
+      String srvName = BleConnectorApplication.getInstance().getGattHelper().lookup(srvUUID, null, true);
       List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
       for(BluetoothGattCharacteristic characteristic : characteristics) {
         if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0) {

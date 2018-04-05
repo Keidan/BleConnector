@@ -1,0 +1,22 @@
+{
+  "name": "System ID",
+  "format": "bits",
+  "bits": [
+    {
+      "name": "Manufacturer Identifier",
+      "start": 0,
+      "length": 5,
+      "direction": "revert",
+      "format": "hex",
+      "split": 1
+    },
+    {
+      "name": "Organizationally Unique Identifier",
+      "start": 5,
+      "length": 3,
+      "direction": "revert",
+      "format": "hex",
+      "split": 1
+    }
+  ]
+}
