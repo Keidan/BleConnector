@@ -17,8 +17,10 @@
             android:id="@+id/tvName"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textAlignment="viewStart"/>
     </TableRow>
 
     <TableRow>
@@ -27,15 +29,19 @@
             android:textSize="12sp"
             android:textStyle="italic"
             android:textColor="@color/textColorDisabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textAlignment="viewStart"/>
         <TextView
             android:id="@+id/tvUUID"
             android:textSize="12sp"
             android:layout_marginStart="5dp"
             android:textStyle="italic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textAlignment="viewStart"/>
     </TableRow>
     <TableRow
         android:layout_marginBottom="5dp">
@@ -51,7 +57,9 @@
             android:textSize="12sp"
             android:layout_marginStart="5dp"
             android:textStyle="italic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:textAlignment="viewStart"/>
     </TableRow>
 </TableLayout>
