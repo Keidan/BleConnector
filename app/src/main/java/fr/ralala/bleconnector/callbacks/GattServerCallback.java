@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import fr.ralala.bleconnector.utils.TimeData;
-import fr.ralala.bleconnector.utils.gatt.GattUUID;
 
 /********************************************************************************
  * <p><b>Project BleConnector</b><br/>
@@ -23,7 +22,7 @@ import fr.ralala.bleconnector.utils.gatt.GattUUID;
  *******************************************************************************/
 public class GattServerCallback extends BluetoothGattServerCallback {
   // UUID for Current Time Service (CTS)
-  public static final UUID CTS_SERVICE_UUID = UUID.fromString(GattUUID.SERVICE_CURRENT_TIME.uuid);
+  public static final UUID CTS_SERVICE_UUID = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb");
   private static final UUID CURRENT_TIME_CHARACTERISTIC_UUID = UUID.fromString("00002a2b-0000-1000-8000-00805f9b34fb");
   private static final UUID LOCAL_TIME_INFO_CHARACTERISTIC_UUID = UUID.fromString("00002a0f-0000-1000-8000-00805f9b34fb");
   public static final BluetoothGattService CTS_GATT_SERVICE = new BluetoothGattService(CTS_SERVICE_UUID,
