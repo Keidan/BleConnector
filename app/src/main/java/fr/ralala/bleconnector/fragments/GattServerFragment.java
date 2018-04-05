@@ -1,6 +1,5 @@
 package fr.ralala.bleconnector.fragments;
 
-import android.bluetooth.BluetoothGattService;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.Switch;
 
 import fr.ralala.bleconnector.R;
 import fr.ralala.bleconnector.activities.GattActivity;
-import fr.ralala.bleconnector.callbacks.GattServerCallback;
 
 
 /********************************************************************************
@@ -39,10 +37,7 @@ public class GattServerFragment extends GattGenericFragment implements View.OnCl
   @Override
   public void onResume() {
     super.onResume();
-    for(BluetoothGattService srv : mActivity.getBluetoothGattServer().getServices())
-      if(srv.getUuid().toString().equals(GattServerCallback.CTS_SERVICE_UUID.toString())) {
-        mSwCurrentTime.setChecked(true);
-      }
+    mSwCurrentTime.setChecked(mActivity.getGattServerCallback().getServerCTS().isRegistered());
 
   }
 
@@ -61,9 +56,9 @@ public class GattServerFragment extends GattGenericFragment implements View.OnCl
     switch (v.getId()) {
       case R.id.swCurrentTime:
         if ( mSwCurrentTime.isChecked()) {
-          mActivity.getBluetoothGattServer().addService(GattServerCallback.CTS_GATT_SERVICE);
+          mActivity.getGattServerCallback().getServerCTS().registerService(mActivity);
         } else {
-          mActivity.getBluetoothGattServer().removeService(GattServerCallback.CTS_GATT_SERVICE);
+          mActivity.getGattServerCallback().getServerCTS().unregisterService(mActivity);
         }
         break;
     }

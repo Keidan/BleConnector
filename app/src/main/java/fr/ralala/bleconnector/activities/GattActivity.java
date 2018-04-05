@@ -5,8 +5,12 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattServer;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.AdvertiseData;
+import android.bluetooth.le.AdvertiseSettings;
+import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,12 +32,14 @@ import fr.ralala.bleconnector.BleConnectorApplication;
 import fr.ralala.bleconnector.R;
 import fr.ralala.bleconnector.callbacks.GattCallback;
 import fr.ralala.bleconnector.callbacks.GattServerCallback;
+import fr.ralala.bleconnector.callbacks.LeAdvertiseCallback;
 import fr.ralala.bleconnector.fragments.GattServerFragment;
 import fr.ralala.bleconnector.fragments.GattGenericFragment;
 import fr.ralala.bleconnector.fragments.GattInspectFragment;
 import fr.ralala.bleconnector.fragments.GattReadFragment;
 import fr.ralala.bleconnector.fragments.GattWriteFragment;
 import fr.ralala.bleconnector.utils.UIHelper;
+import fr.ralala.bleconnector.utils.gatt.cts.ServerCTS;
 
 
 /********************************************************************************
@@ -52,7 +58,10 @@ public class GattActivity extends AppCompatActivity {
   private List<BluetoothGattService> mListDataHeader = new ArrayList<>();
   private HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> mListDataChild = new HashMap<>();
   private List<GattGenericFragment> mFragments = new ArrayList<>();
-  private static BluetoothGattServer mBluetoothGattServer = null;
+  private BluetoothGattServer mBluetoothGattServer = null;
+  private GattServerCallback mGattServerCallback;
+  private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
+  private LeAdvertiseCallback mLeAdvertiseCallback;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +81,33 @@ public class GattActivity extends AppCompatActivity {
 
     BluetoothManager manager = (BluetoothManager) getSystemService(GattActivity.BLUETOOTH_SERVICE);
     if(manager != null) {
-      GattServerCallback callback = new GattServerCallback();
-      mBluetoothGattServer = manager.openGattServer(this, callback);
+      mBluetoothLeAdvertiser = manager.getAdapter().getBluetoothLeAdvertiser();
+      if(mBluetoothLeAdvertiser != null) {
+        AdvertiseSettings settings = new AdvertiseSettings.Builder()
+            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+            .setConnectable(true)
+            .setTimeout(0)
+            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+            .build();
+
+        /* Adds all services */
+        AdvertiseData data = new AdvertiseData.Builder()
+            .setIncludeDeviceName(true)
+            .setIncludeTxPowerLevel(false)
+            .addServiceUuid(new ParcelUuid(ServerCTS.TIME_SERVICE))
+            .build();
+        mLeAdvertiseCallback = new LeAdvertiseCallback();
+        mBluetoothLeAdvertiser
+            .startAdvertising(settings, data, mLeAdvertiseCallback);
+      }
+      mGattServerCallback = new GattServerCallback();
+      mBluetoothGattServer = manager.openGattServer(this, mGattServerCallback);
       if (mBluetoothGattServer == null) {
         Log.e(getClass().getSimpleName(), "Unable to start GATT server");
       } else {
-        callback.setGattServer(mBluetoothGattServer);
+        mGattServerCallback.setGattServer(mBluetoothGattServer);
         if(BleConnectorApplication.getInstance().useCurrentTimeService())
-          mBluetoothGattServer.addService(GattServerCallback.CTS_GATT_SERVICE);
+          mGattServerCallback.getServerCTS().registerService(this);
       }
     } else
       Log.e(getClass().getSimpleName(), "Null BluetoothManager object");
@@ -88,6 +116,20 @@ public class GattActivity extends AppCompatActivity {
     mGattCallback = new GattCallback(this);
     mBluetoothGatt = scanResult.getDevice().connectGatt(this, false, mGattCallback);
     mGattCallback.setBluetoothGatt(mBluetoothGatt);
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    if(mGattServerCallback != null)
+      mGattServerCallback.getServerCTS().registerBroadcast(this);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    if(mGattServerCallback != null)
+      mGattServerCallback.getServerCTS().unregisterBroadcast(this);
   }
 
 
@@ -99,9 +141,6 @@ public class GattActivity extends AppCompatActivity {
   }
   public BluetoothGatt getBluetoothGatt() {
     return mBluetoothGatt;
-  }
-  public BluetoothGattServer getBluetoothGattServer() {
-    return mBluetoothGattServer;
   }
 
   private void setupViewPager(ViewPager viewPager) {
@@ -128,12 +167,17 @@ public class GattActivity extends AppCompatActivity {
       mBluetoothGattServer.close();
       mBluetoothGattServer = null;
     }
+    if(mBluetoothLeAdvertiser != null)
+      mBluetoothLeAdvertiser.stopAdvertising(mLeAdvertiseCallback);
   }
 
 
 
   public GattCallback getGattCallback() {
     return mGattCallback;
+  }
+  public GattServerCallback getGattServerCallback() {
+    return mGattServerCallback;
   }
 
   public void progressShow() {

@@ -1,4 +1,4 @@
-package fr.ralala.bleconnector.utils;
+package fr.ralala.bleconnector.utils.gatt.cts;
 
 
 import java.nio.ByteBuffer;
@@ -16,11 +16,12 @@ import java.util.Calendar;
 public class TimeData {
   private TimeData() {}
 
-  public static byte UPDATE_REASON_UNKNOWN = 0;
-  public static byte UPDATE_REASON_MANUAL = 1;
-  public static byte UPDATE_REASON_EXTERNAL_REF = (1 << 1);
-  public static byte UPDATE_REASON_TIME_ZONE_CHANGE = (1 << 2);
-  public static byte UPDATE_REASON_DAYLIGHT_SAVING = (1 << 3);
+  // Adjustment Flags
+  public static final byte ADJUST_NONE     = 0x0;
+  public static final byte ADJUST_MANUAL   = 0x1;
+  public static final byte ADJUST_EXTERNAL = 0x2;
+  public static final byte ADJUST_TIMEZONE = 0x4;
+  public static final byte ADJUST_DST      = 0x8;
 
   public static byte[] exactTime256WithUpdateReason(Calendar time, byte updateReason) {
     // See https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.current_time.xml
