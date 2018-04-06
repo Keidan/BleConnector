@@ -1,4 +1,4 @@
 {
   "name": "Battery Level",
-  "format": "u32"
+  "format": "u8"
 }
