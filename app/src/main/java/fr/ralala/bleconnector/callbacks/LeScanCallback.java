@@ -9,7 +9,7 @@ import android.bluetooth.le.ScanSettings;
 import java.util.List;
 
 import fr.ralala.bleconnector.R;
-import fr.ralala.bleconnector.adapters.ScanListAdapter;
+import fr.ralala.bleconnector.adapters.TabFragmentScanListAdapter;
 import fr.ralala.bleconnector.utils.UIHelper;
 
 /********************************************************************************
@@ -22,9 +22,9 @@ import fr.ralala.bleconnector.utils.UIHelper;
  *******************************************************************************/
 public class LeScanCallback extends ScanCallback {
   private Activity mActivity;
-  private ScanListAdapter mScanListAdapter;
+  private TabFragmentScanListAdapter mScanListAdapter;
 
-  public LeScanCallback(Activity activity, ScanListAdapter scanListAdapter) {
+  public LeScanCallback(Activity activity, TabFragmentScanListAdapter scanListAdapter) {
     mActivity = activity;
     mScanListAdapter = scanListAdapter;
   }

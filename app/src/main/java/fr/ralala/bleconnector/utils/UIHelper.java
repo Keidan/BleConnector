@@ -1,6 +1,7 @@
 package fr.ralala.bleconnector.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
@@ -112,5 +113,24 @@ public class UIHelper {
           snackbar.dismiss();
         });
     snackbar.show();
+  }
+
+
+  /**
+   * Test if a specific service is in running state.
+   * @param context The main context.
+   * @param serviceClass The service class
+   * @return boolean
+   */
+  public static boolean isServiceRunning(final Context context, final Class<?> serviceClass) {
+    final ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    if(manager != null) {
+      for (final ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+        if (serviceClass.getName().equals(service.service.getClassName())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

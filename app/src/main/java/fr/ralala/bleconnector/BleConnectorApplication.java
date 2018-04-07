@@ -45,13 +45,56 @@ public class BleConnectorApplication extends Application {
     return mGattHelper;
   }
 
-  public boolean useServer() {
+  /**
+   * Returns if the service server is to be used.
+   * @return boolean
+   */
+  public boolean isUseServer() {
     return mSharedPreferences.getBoolean(KEY_SERVER, DEFAULT_SERVER);
   }
-  public boolean useCurrentTimeService() {
+  /**
+   * Returns if the current time service is to be used.
+   * @return boolean
+   */
+  public boolean isUseCurrentTimeService() {
     return mSharedPreferences.getBoolean(KEY_CURRENT_TIME_SERVICE, DEFAULT_CURRENT_TIME_SERVICE);
   }
-  public boolean useBatteryService() {
+  /**
+   * Returns if the battery service is to be used.
+   * @return boolean
+   */
+  public boolean isUseBatteryService() {
     return mSharedPreferences.getBoolean(KEY_BATTERY_SERVICE, DEFAULT_BATTERY_SERVICE);
+  }
+
+
+  /**
+   * Sets the use service server state.
+   * @param b The new state.
+   */
+  public void setUseServer(boolean b) {
+    SharedPreferences.Editor e = mSharedPreferences.edit();
+    e.putBoolean(KEY_SERVER, b);
+    e.apply();
+  }
+
+  /**
+   * Sets the use current time service state.
+   * @param b The new state.
+   */
+  public void setUseCurrentTimeService(boolean b) {
+    SharedPreferences.Editor e = mSharedPreferences.edit();
+    e.putBoolean(KEY_CURRENT_TIME_SERVICE, b);
+    e.apply();
+  }
+
+  /**
+   * Sets the use battery service state.
+   * @param b The new state.
+   */
+  public void setUseBatteryService(boolean b) {
+    SharedPreferences.Editor e = mSharedPreferences.edit();
+    e.putBoolean(KEY_BATTERY_SERVICE, b);
+    e.apply();
   }
 }

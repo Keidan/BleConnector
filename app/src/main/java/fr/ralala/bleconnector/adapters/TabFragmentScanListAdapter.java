@@ -22,8 +22,8 @@ import fr.ralala.bleconnector.R;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class ScanListAdapter extends ArrayAdapter<ScanResult> {
-  private final static int ID = R.layout.scan_item;
+public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
+  private final static int ID = R.layout.itme_list_scan;
   private final Context mContext;
   private final List<ScanResult> mItems;
 
@@ -38,7 +38,7 @@ public class ScanListAdapter extends ArrayAdapter<ScanResult> {
    * @param context The Android context.
    * @param objects The objects list.
    */
-  public ScanListAdapter(final Context context, final List<ScanResult> objects) {
+  public TabFragmentScanListAdapter(final Context context, final List<ScanResult> objects) {
     super(context, ID, objects);
     mContext = context;
     mItems = objects;

@@ -12,6 +12,21 @@
     <color name="colorButtonNormal">#FF424242</color>
     <color name="colorBackground">#FF424242</color>
     <color name="colorControlNormal">#FF424242</color>
+    <color name="colorForeground">#FFFFFFFF</color>
+    <color name="colorForegroundInverse">#FF000000</color>
+    <color name="colorBackgroundCacheHint">#ff303030</color>
+    <color name="colorBackgroundFloating">#ff424242</color>
+    <color name="textColorPrimaryInverse">#FF000000</color>
+    <color name="textColorPrimaryDisableOnly">#FFFFFFFF</color>
+    <color name="textColorPrimaryInverseDisableOnly">#FFFFFFFF</color>
+    <color name="textColorSecondaryInverse">#FF000000</color>
+    <color name="textColorTertiary">#FF9E9E9E</color>
+    <color name="textColorTertiaryInverse">#FF000000</color>
+    <color name="textColorHint">#FF9E9E9E</color>
+    <color name="textColorHintInverse">#FF000000</color>
+    <color name="textColorHighlight">#006c8f</color>
+    <color name="colorControlHighlight">#33ffffff</color>
+    <color name="colorSwitchThumbNormal">#FF9E9E9E</color>
     <color name="textColorPrimaryDisabled">#FFFFFFFF</color>
     <color name="textColorDisabled">#FF9E9E9E</color>
     <color name="colorAccentDisabled">#FF76A6B6</color>
@@ -19,4 +34,8 @@
     <color name="transparent">@android:color/transparent</color>
     <color name="list_item_bg_pressed">@color/colorAccent</color>
     <color name="list_item_bg_normal">@color/windowBackground</color>
+
+    <color name="side_nav_bar_startColor">@color/windowBackground</color>
+    <color name="side_nav_bar_centerColor">@color/colorPrimary</color>
+    <color name="side_nav_bar_endColor">@color/navigationBarColor</color>
 </resources>

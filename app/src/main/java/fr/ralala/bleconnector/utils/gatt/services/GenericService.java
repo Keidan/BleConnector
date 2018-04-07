@@ -20,7 +20,7 @@ import java.util.Set;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public abstract class Service {
+public abstract class GenericService {
 
   protected Set<BluetoothDevice> mDevices;
   protected BluetoothGattServer mGattServer;

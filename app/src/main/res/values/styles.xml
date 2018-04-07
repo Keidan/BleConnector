@@ -20,17 +20,36 @@
         <item name="android:itemBackground">@color/windowBackground</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="alertDialogTheme">@style/AppTheme.DialogTheme</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.DialogTheme</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerItemStyle</item>
         <item name="android:checkboxStyle">@style/CheckBoxStyle</item>
         <item name="android:radioButtonStyle">@style/RadioButtonStyle</item>
+        <item name="android:colorForeground">@color/colorForeground</item>
+        <item name="android:colorForegroundInverse">@color/colorForegroundInverse</item>
+        <item name="android:colorBackgroundCacheHint">@color/colorBackgroundCacheHint</item>
+        <item name="colorBackgroundFloating">@color/colorBackgroundFloating</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
+        <item name="android:textColorTertiary">@color/textColorTertiary</item>
+        <item name="android:textColorTertiaryInverse">@color/textColorTertiaryInverse</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/textColorPrimaryDisableOnly</item>
+        <item name="android:textColorPrimaryInverseDisableOnly">@color/textColorPrimaryInverseDisableOnly</item>
+        <item name="android:textColorHintInverse">@color/textColorHintInverse</item>
+        <item name="android:textColorHighlight">@color/textColorHighlight</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+        <item name="colorButtonNormal">@color/colorButtonNormal</item>
+        <item name="colorSwitchThumbNormal">@color/colorSwitchThumbNormal</item>
     </style>
     <style name="AppTheme.NoActionBar"  parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="Theme.AppCompat.Light.NoActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.AppBarOverlay" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@color/colorBackground</item>
         <item name="android:textColor">@color/text_color_enabled</item>
@@ -61,8 +80,8 @@
         <item name="android:textColor">?attr/colorControlActivated</item>
     </style>
     <style name="InputLabel" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingBottom">@dimen/input_label_paddingBottom</item>
+        <item name="android:paddingStart">@dimen/input_label_paddingStart</item>
+        <item name="android:paddingEnd">@dimen/input_label_paddingEnd</item>
     </style>
 </resources>

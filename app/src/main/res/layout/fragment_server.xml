@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:stretchColumns="1"
-    tools:context=".activities.GattActivity">
+    tools:context=".MainActivity">
 
     <TableRow>
         <TextView

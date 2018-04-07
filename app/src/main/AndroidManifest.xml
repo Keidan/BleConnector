@@ -15,20 +15,18 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.NoActionBar"
         android:name=".BleConnectorApplication">
 
-        <activity android:name=".activities.ScanActivity" android:configChanges="orientation|screenSize">
+        <activity android:name=".MainActivity" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name=".activities.GattActivity"
-            android:configChanges="orientation|screenSize" />
+
+        <service android:name=".GattServerService"/>
     </application>
 
 </manifest>

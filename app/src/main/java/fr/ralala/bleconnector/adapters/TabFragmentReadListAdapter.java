@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.List;
@@ -19,23 +18,22 @@ import fr.ralala.bleconnector.utils.gatt.GattHelper;
 
 /********************************************************************************
  * <p><b>Project BleConnector</b><br/>
- * Adapter used with the GATT write list view.
+ * Adapter used with the GATT read list view.
  * </p>
  *
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item> {
-  private final static int ID = R.layout.gatt_write_item;
+public class TabFragmentReadListAdapter extends ArrayAdapter<TabFragmentReadListAdapter.Item> {
+  private final static int ID = R.layout.itme_list_read;
   private final Context mContext;
-  private final List<GattWriteListAdapter.Item> mItems;
+  private final List<TabFragmentReadListAdapter.Item> mItems;
 
   private class ViewHolder {
     TextView tvNameService;
     TextView tvName;
     TextView tvUUID;
     TextView tvData;
-    TableRow trData;
   }
 
   public static class Item {
@@ -49,7 +47,7 @@ public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item
    * @param context The Android context.
    * @param objects The objects list.
    */
-  public GattWriteListAdapter(final Context context, final List<GattWriteListAdapter.Item> objects) {
+  public TabFragmentReadListAdapter(final Context context, final List<TabFragmentReadListAdapter.Item> objects) {
     super(context, ID, objects);
     mContext = context;
     mItems = objects;
@@ -61,7 +59,7 @@ public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item
    * @return The item.
    */
   @Override
-  public GattWriteListAdapter.Item getItem(final int i) {
+  public TabFragmentReadListAdapter.Item getItem(final int i) {
     return mItems.get(i);
   }
 
@@ -71,7 +69,7 @@ public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item
    * @return The position of the specified item.
    */
   @Override
-  public int getPosition(GattWriteListAdapter.Item item) {
+  public int getPosition(TabFragmentReadListAdapter.Item item) {
     return super.getPosition(item);
   }
 
@@ -114,24 +112,18 @@ public class GattWriteListAdapter extends ArrayAdapter<GattWriteListAdapter.Item
       holder.tvName = v.findViewById(R.id.tvName);
       holder.tvUUID = v.findViewById(R.id.tvUUID);
       holder.tvData = v.findViewById(R.id.tvData);
-      holder.trData = v.findViewById(R.id.trData);
       v.setTag(holder);
     } else {
       holder = (ViewHolder)v.getTag();
     }
-    final GattWriteListAdapter.Item o = getItem(position);
+    final TabFragmentReadListAdapter.Item o = getItem(position);
     if (o != null) {
       String uuid = o.characteristic.getUuid().toString();
       holder.tvNameService.setText(o.srvName == null ? o.srvUUID : o.srvName);
       holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic), false));
       holder.tvUUID.setText(GattHelper.fixUUID(uuid));
-      if((o.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
-        holder.trData.setVisibility(View.GONE);
-      } else {
-        holder.trData.setVisibility(View.VISIBLE);
-        byte[] bytes = o.characteristic.getValue();
-        holder.tvData.setText(bytes == null ? "" : BleConnectorApplication.getInstance().getGattHelper().convert(uuid, bytes));
-      }
+      byte [] bytes = o.characteristic.getValue();
+      holder.tvData.setText(bytes == null ? "" : BleConnectorApplication.getInstance().getGattHelper().convert(uuid, bytes));
     }
     return v;
   }

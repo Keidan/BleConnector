@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BleConnector</string>
+    <string name="app_title" translatable="false">BLE Connector</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="home">Home</string>
+    <string name="server">Server</string>
+    <string name="scan_running">Scanning is in progress, please stop it before.</string>
+    <string name="scan_and_connect_before">Perform a scan and connect to a device before.</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="uuid">UUID:</string>
+    <string name="on_double_back_exit_text">Press once again to exit!</string>
+    <string name="service_notification_title">BLE Connector</string>
+    <string name="service_notification_content">GATT Server notification</string>
     <string name="permissions_title">Permissions</string>
     <string name="ble_permissions_required">The Bluetooth permissions are required</string>
     <string name="ble_not_supported">BLE feature not supported</string>
@@ -49,8 +59,8 @@
     <string name="value_hint_hex">Value in hex</string>
     <string name="value_hint_hex_array">Value in hex (eg: 0x00 0x00 etc&#8230;)</string>
     <string name="error_write_characteristic">Unable to write characteristic</string>
+    <string name="gatt_tab_scan">Scan</string>>
     <string name="gatt_tab_inspect">Inspect</string>>
-    <string name="gatt_tab_server">Server</string>
     <string name="gatt_tab_read">Read</string>
     <string name="gatt_tab_write">Write</string>
     <string name="read_all">Read All</string>

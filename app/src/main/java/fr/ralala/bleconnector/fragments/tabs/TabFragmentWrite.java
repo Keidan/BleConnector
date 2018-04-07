@@ -1,5 +1,6 @@
-package fr.ralala.bleconnector.fragments;
+package fr.ralala.bleconnector.fragments.tabs;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
@@ -7,10 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -25,24 +27,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ralala.bleconnector.BleConnectorApplication;
+import fr.ralala.bleconnector.MainActivity;
 import fr.ralala.bleconnector.R;
-import fr.ralala.bleconnector.activities.GattActivity;
-import fr.ralala.bleconnector.adapters.GattWriteListAdapter;
+import fr.ralala.bleconnector.adapters.TabFragmentWriteListAdapter;
 import fr.ralala.bleconnector.utils.UIHelper;
 
-
-/********************************************************************************
+/**
+ *******************************************************************************
  * <p><b>Project BleConnector</b><br/>
- * GATT read fragment
+ * Write fragment used in TabLayout view.
  * </p>
- *
  * @author Keidan
- * <p>
- *******************************************************************************/
-public class GattWriteFragment extends GattGenericFragment {
-  private GattActivity mActivity;
+ *
+ *******************************************************************************
+ */
+public class TabFragmentWrite extends GenericTabFragment {
+  private MainActivity mActivity;
+  private TabFragmentWriteListAdapter mGattWriteListAdapter;
   private ListView mListWrite;
-  private GattWriteListAdapter mGattWriteListAdapter;
 
   private class Item {
     int fmt;
@@ -58,23 +60,29 @@ public class GattWriteFragment extends GattGenericFragment {
     }
   }
 
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
-    mActivity = (GattActivity)getActivity();
+    mActivity = (MainActivity)getActivity();
     assert mActivity != null;
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.fragment_tab_read, menu);
+    super.onCreateOptionsMenu(menu, inflater);
   }
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View root = inflater.inflate(R.layout.fragment_gatt_write, container, false);
+    View root = inflater.inflate(R.layout.fragment_tab_write, container, false);
     mListWrite = root.findViewById(R.id.listWrite);
     mListWrite.setOnItemClickListener((adapterView, view, i, l) -> {
       if(mGattWriteListAdapter == null)
         return;
-      GattWriteListAdapter.Item item = mGattWriteListAdapter.getItem(i);
+      TabFragmentWriteListAdapter.Item item = mGattWriteListAdapter.getItem(i);
       if(item == null)
         return;
       int props = item.characteristic.getProperties();
@@ -147,25 +155,46 @@ public class GattWriteFragment extends GattGenericFragment {
         });
       }
     });
-    notifyServicesDiscovered();
     return root;
   }
 
-  private boolean isValid(String text, EditText et) {
-    if (text.trim().isEmpty()) {
-      UIHelper.shakeError(et, getString(R.string.invalid_value));
-      return false;
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    notifyServicesDiscovered();
+  }
+
+
+  /**
+   * Requests for clear UI.
+   */
+  @Override
+  public void requestClearUI() {
+    if(mActivity != null) {
+      mGattWriteListAdapter = new TabFragmentWriteListAdapter(mActivity, new ArrayList<>());
+      mListWrite.setAdapter(mGattWriteListAdapter);
     }
-    return true;
+  }
+
+
+  /**
+   * Returns true if the fragment is locked and a switch can't be processed.
+   * @return boolean
+   */
+  @Override
+  public boolean isLocked() {
+    return false;
   }
 
   /**
    * Called when the services are discovered.
    */
+  @Override
   public void notifyServicesDiscovered() {
-    if(mActivity == null)
+    if(mActivity == null || mActivity.getBluetoothGatt() == null)
       return;
-    List<GattWriteListAdapter.Item> list = new ArrayList<>();
+    List<TabFragmentWriteListAdapter.Item> list = new ArrayList<>();
     List<BluetoothGattService> services = mActivity.getBluetoothGatt().getServices();
     for(BluetoothGattService service : services) {
       String srvUUID = service.getUuid().toString();
@@ -176,7 +205,7 @@ public class GattWriteFragment extends GattGenericFragment {
         if((props & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ||
             (props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 ||
             (props & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0) {
-          GattWriteListAdapter.Item item = new GattWriteListAdapter.Item();
+          TabFragmentWriteListAdapter.Item item = new TabFragmentWriteListAdapter.Item();
           item.srvName = srvName;
           item.srvUUID = srvUUID;
           item.characteristic = characteristic;
@@ -185,11 +214,18 @@ public class GattWriteFragment extends GattGenericFragment {
       }
     }
 
-    mGattWriteListAdapter = new GattWriteListAdapter(mActivity, list);
+    mGattWriteListAdapter = new TabFragmentWriteListAdapter(mActivity, list);
     mListWrite.setAdapter(mGattWriteListAdapter);
     mActivity.getGattCallback().setGattWriteListAdapter(mGattWriteListAdapter);
   }
 
+  private boolean isValid(String text, EditText et) {
+    if (text.trim().isEmpty()) {
+      UIHelper.shakeError(et, getString(R.string.invalid_value));
+      return false;
+    }
+    return true;
+  }
 
   private interface DialogPositiveClick {
     void onClick(AlertDialog dialog, TextInputEditText editText, Spinner spFormat);

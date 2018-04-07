@@ -22,8 +22,8 @@ import fr.ralala.bleconnector.callbacks.GattServerCallback;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class BatteryService extends Service {
-  /* Service UUID */
+public class BatteryService extends GenericService {
+  /* Srv UUID */
   public static final UUID SERVICE_UUID = UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb");
   /* Mandatory Characteristic */
   private static final UUID CHARACTERISTIC = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");

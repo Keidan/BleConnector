@@ -23,8 +23,8 @@ import fr.ralala.bleconnector.callbacks.GattServerCallback;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class CurrentTimeService extends Service {
-  /* Service UUID */
+public class CurrentTimeService extends GenericService {
+  /* Srv UUID */
   public static final UUID SERVICE_UUID = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb");
   /* Mandatory Characteristic */
   private static final UUID CHARACTERISTIC = UUID.fromString("00002a2b-0000-1000-8000-00805f9b34fb");
