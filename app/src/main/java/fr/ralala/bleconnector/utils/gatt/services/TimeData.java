@@ -1,4 +1,4 @@
-package fr.ralala.bleconnector.utils.gatt.cts;
+package fr.ralala.bleconnector.utils.gatt.services;
 
 
 import java.nio.ByteBuffer;

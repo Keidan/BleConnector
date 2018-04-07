@@ -14,6 +14,7 @@
     <string name="snack_hide">HIDE</string>
     <string name="start_scan">Scan</string>
     <string name="stop_scan">Stop</string>
+    <string name="error">Error</string>
     <string name="unknown">Unknown</string>
     <string name="unknown_service">Unknown Service</string>
     <string name="unknown_characteristic">Unknown Characteristic</string>
@@ -23,7 +24,6 @@
     <string name="ble_scan_failed_feature_unsupported">Fails to start power optimized scan as this feature is not supported.</string>
     <string name="gatt_connect_timeout">GATT connect timeout</string>
     <string name="data">Data:</string>
-    <string name="data_error">Error</string>
     <string name="data_error_read_not_permitted">Read not permitted</string>
     <string name="data_error_write_not_permitted">Write not permitted</string>
     <string name="data_error_insufficient_authentication">Insufficient authentication</string>
@@ -44,7 +44,10 @@
     <string name="property_extended_props">EXTENDED PROPS</string>
     <string name="characteristic_tilte">Characteristic</string>
     <string name="invalid_value">Invalid value</string>
-    <string name="value_hint">Value</string>
+    <string name="format_hint">Format</string>
+    <string name="value_hint">Value in string</string>
+    <string name="value_hint_hex">Value in hex</string>
+    <string name="value_hint_hex_array">Value in hex (eg: 0x00 0x00 etc&#8230;)</string>
     <string name="error_write_characteristic">Unable to write characteristic</string>
     <string name="gatt_tab_inspect">Inspect</string>>
     <string name="gatt_tab_server">Server</string>
@@ -52,7 +55,9 @@
     <string name="gatt_tab_write">Write</string>
     <string name="read_all">Read All</string>
     <string name="ble_appearance_unsupported">Unsupported</string>
-    <string name="broadcast_device">Current Time</string>
+    <string name="start_server">Start Server</string>
+    <string name="current_time">Current Time</string>
+    <string name="battery">Battery</string>
     <string name="system_id_manufacturer_identifier">Manufacturer Identifier</string>
     <string name="system_id_organizationally_unique_identifier">Organizationally Unique Identifier</string>
     <string name="pnp_id_vendor_id_source">Vendor ID Source</string>

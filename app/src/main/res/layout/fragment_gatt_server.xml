@@ -11,9 +11,31 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/broadcast_device" />
+            android:text="@string/start_server" />
+        <Switch
+            android:id="@+id/swStartServer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="80dp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/current_time" />
         <Switch
             android:id="@+id/swCurrentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="80dp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/battery" />
+        <Switch
+            android:id="@+id/swBattery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:switchMinWidth="80dp" />

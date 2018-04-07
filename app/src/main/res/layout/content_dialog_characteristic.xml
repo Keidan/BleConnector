@@ -2,16 +2,19 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="10dp"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:stretchColumns="*">
 
     <android.support.design.widget.TextInputLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:id="@+id/editTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:inputType="text"
             android:hint="@string/value_hint"
             android:imeOptions="actionDone"
@@ -21,4 +24,19 @@
             <requestFocus />
         </android.support.design.widget.TextInputEditText>
     </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/format_hint"
+        style="@style/InputLabel" />
+
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/spFormat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_gravity="bottom">
+
+    </android.support.v7.widget.AppCompatSpinner>
 </LinearLayout>

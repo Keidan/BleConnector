@@ -15,8 +15,12 @@ import fr.ralala.bleconnector.utils.gatt.GattHelper;
  * <p>
  *******************************************************************************/
 public class BleConnectorApplication extends Application {
-  private static final String KEY_CTS = "kcts";
-  public static final boolean DEFAULT_CTS = true;
+  private static final String KEY_SERVER = "kStartServer";
+  private static final String KEY_CURRENT_TIME_SERVICE = "kCurrentTimeService";
+  private static final String KEY_BATTERY_SERVICE = "kBatteryService";
+  public static final boolean DEFAULT_SERVER  = true;
+  public static final boolean DEFAULT_CURRENT_TIME_SERVICE  = true;
+  public static final boolean DEFAULT_BATTERY_SERVICE = true;
   private GattHelper mGattHelper;
   private SharedPreferences mSharedPreferences;
   private static BleConnectorApplication singleton;
@@ -41,7 +45,13 @@ public class BleConnectorApplication extends Application {
     return mGattHelper;
   }
 
+  public boolean useServer() {
+    return mSharedPreferences.getBoolean(KEY_SERVER, DEFAULT_SERVER);
+  }
   public boolean useCurrentTimeService() {
-    return mSharedPreferences.getBoolean(KEY_CTS, DEFAULT_CTS);
+    return mSharedPreferences.getBoolean(KEY_CURRENT_TIME_SERVICE, DEFAULT_CURRENT_TIME_SERVICE);
+  }
+  public boolean useBatteryService() {
+    return mSharedPreferences.getBoolean(KEY_BATTERY_SERVICE, DEFAULT_BATTERY_SERVICE);
   }
 }

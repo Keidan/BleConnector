@@ -9,6 +9,7 @@ import android.widget.Switch;
 
 import fr.ralala.bleconnector.R;
 import fr.ralala.bleconnector.activities.GattActivity;
+import fr.ralala.bleconnector.callbacks.GattServerCallback;
 
 
 /********************************************************************************
@@ -20,7 +21,9 @@ import fr.ralala.bleconnector.activities.GattActivity;
  * <p>
  *******************************************************************************/
 public class GattServerFragment extends GattGenericFragment implements View.OnClickListener {
+  private Switch mSwStartServer;
   private Switch mSwCurrentTime;
+  private Switch mSwBattery;
   private GattActivity mActivity;
 
   @Override
@@ -29,16 +32,24 @@ public class GattServerFragment extends GattGenericFragment implements View.OnCl
     mActivity = (GattActivity)getActivity();
     assert mActivity != null;
     View root = inflater.inflate(R.layout.fragment_gatt_server, container, false);
+    mSwStartServer = root.findViewById(R.id.swStartServer);
     mSwCurrentTime = root.findViewById(R.id.swCurrentTime);
+    mSwBattery = root.findViewById(R.id.swBattery);
+    mSwStartServer.setOnClickListener(this);
     mSwCurrentTime.setOnClickListener(this);
+    mSwBattery.setOnClickListener(this);
     return root;
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    mSwCurrentTime.setChecked(mActivity.getGattServerCallback().getServerCTS().isRegistered());
-
+    mSwStartServer.setChecked(mActivity.isServerStarted());
+    boolean checked = mSwStartServer.isChecked();
+    mSwCurrentTime.setEnabled(!checked);
+    mSwBattery.setEnabled(!checked);
+    mSwCurrentTime.setChecked(mActivity.getGattServerCallback().getService(GattServerCallback.CURRENT_TIME_SERVICE).isRegistered());
+    mSwBattery.setChecked(mActivity.getGattServerCallback().getService(GattServerCallback.BATTERY_SERVICE).isRegistered());
   }
 
   /**
@@ -54,11 +65,26 @@ public class GattServerFragment extends GattGenericFragment implements View.OnCl
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
+      case R.id.swStartServer:
+        boolean checked = mSwStartServer.isChecked();
+        mSwCurrentTime.setEnabled(!checked);
+        mSwBattery.setEnabled(!checked);
+        if(checked)
+          mActivity.startServer();
+        else
+          mActivity.stopServer();
       case R.id.swCurrentTime:
         if ( mSwCurrentTime.isChecked()) {
-          mActivity.getGattServerCallback().getServerCTS().registerService(mActivity);
+          mActivity.getGattServerCallback().getService(GattServerCallback.CURRENT_TIME_SERVICE).registerService(mActivity);
         } else {
-          mActivity.getGattServerCallback().getServerCTS().unregisterService(mActivity);
+          mActivity.getGattServerCallback().getService(GattServerCallback.CURRENT_TIME_SERVICE).unregisterService(mActivity);
+        }
+        break;
+      case R.id.swBattery:
+        if ( mSwBattery.isChecked()) {
+          mActivity.getGattServerCallback().getService(GattServerCallback.BATTERY_SERVICE).registerService(mActivity);
+        } else {
+          mActivity.getGattServerCallback().getService(GattServerCallback.BATTERY_SERVICE).unregisterService(mActivity);
         }
         break;
     }

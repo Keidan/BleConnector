@@ -39,7 +39,9 @@ import fr.ralala.bleconnector.fragments.GattInspectFragment;
 import fr.ralala.bleconnector.fragments.GattReadFragment;
 import fr.ralala.bleconnector.fragments.GattWriteFragment;
 import fr.ralala.bleconnector.utils.UIHelper;
-import fr.ralala.bleconnector.utils.gatt.cts.ServerCTS;
+import fr.ralala.bleconnector.utils.gatt.services.BatteryService;
+import fr.ralala.bleconnector.utils.gatt.services.CurrentTimeService;
+import fr.ralala.bleconnector.utils.gatt.services.Service;
 
 
 /********************************************************************************
@@ -79,39 +81,10 @@ public class GattActivity extends AppCompatActivity {
     tabLayout.setupWithViewPager(viewPager);
 
 
-    BluetoothManager manager = (BluetoothManager) getSystemService(GattActivity.BLUETOOTH_SERVICE);
-    if(manager != null) {
-      mBluetoothLeAdvertiser = manager.getAdapter().getBluetoothLeAdvertiser();
-      if(mBluetoothLeAdvertiser != null) {
-        AdvertiseSettings settings = new AdvertiseSettings.Builder()
-            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-            .setConnectable(true)
-            .setTimeout(0)
-            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
-            .build();
-
-        /* Adds all services */
-        AdvertiseData data = new AdvertiseData.Builder()
-            .setIncludeDeviceName(true)
-            .setIncludeTxPowerLevel(false)
-            .addServiceUuid(new ParcelUuid(ServerCTS.TIME_SERVICE))
-            .build();
-        mLeAdvertiseCallback = new LeAdvertiseCallback();
-        mBluetoothLeAdvertiser
-            .startAdvertising(settings, data, mLeAdvertiseCallback);
-      }
-      mGattServerCallback = new GattServerCallback();
-      mBluetoothGattServer = manager.openGattServer(this, mGattServerCallback);
-      if (mBluetoothGattServer == null) {
-        Log.e(getClass().getSimpleName(), "Unable to start GATT server");
-      } else {
-        mGattServerCallback.setGattServer(mBluetoothGattServer);
-        if(BleConnectorApplication.getInstance().useCurrentTimeService())
-          mGattServerCallback.getServerCTS().registerService(this);
-      }
-    } else
-      Log.e(getClass().getSimpleName(), "Null BluetoothManager object");
-
+    BleConnectorApplication app = BleConnectorApplication.getInstance();
+    if(app.useServer()) {
+      startServer();
+    }
     ScanResult scanResult = getIntent().getParcelableExtra(EXTRA);
     mGattCallback = new GattCallback(this);
     mBluetoothGatt = scanResult.getDevice().connectGatt(this, false, mGattCallback);
@@ -121,15 +94,19 @@ public class GattActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    if(mGattServerCallback != null)
-      mGattServerCallback.getServerCTS().registerBroadcast(this);
+    if(mGattServerCallback != null) {
+      for(Service service : mGattServerCallback.getServices())
+        service.registerBroadcast(this);
+    }
   }
 
   @Override
   protected void onStop() {
     super.onStop();
-    if(mGattServerCallback != null)
-      mGattServerCallback.getServerCTS().unregisterBroadcast(this);
+    if(mGattServerCallback != null) {
+      for(Service service : mGattServerCallback.getServices())
+        service.unregisterBroadcast(this);
+    }
   }
 
 
@@ -163,6 +140,53 @@ public class GattActivity extends AppCompatActivity {
     }
     mBluetoothGatt.close();
     mBluetoothGatt = null;
+    stopServer();
+  }
+
+
+  public void startServer() {
+    BluetoothManager manager = (BluetoothManager) getSystemService(GattActivity.BLUETOOTH_SERVICE);
+    if (manager != null) {
+      mBluetoothLeAdvertiser = manager.getAdapter().getBluetoothLeAdvertiser();
+      if (mBluetoothLeAdvertiser != null) {
+        AdvertiseSettings settings = new AdvertiseSettings.Builder()
+            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+            .setConnectable(true)
+            .setTimeout(0)
+            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+            .build();
+
+        /* Adds all services */
+        AdvertiseData data = new AdvertiseData.Builder()
+            .setIncludeDeviceName(true)
+            .setIncludeTxPowerLevel(true)
+            .addServiceUuid(new ParcelUuid(CurrentTimeService.SERVICE_UUID))
+            .addServiceUuid(new ParcelUuid(BatteryService.SERVICE_UUID))
+            .build();
+        mLeAdvertiseCallback = new LeAdvertiseCallback();
+        mBluetoothLeAdvertiser
+            .startAdvertising(settings, data, mLeAdvertiseCallback);
+      }
+      mGattServerCallback = new GattServerCallback();
+      mBluetoothGattServer = manager.openGattServer(this, mGattServerCallback);
+      if (mBluetoothGattServer == null) {
+        Log.e(getClass().getSimpleName(), "Unable to start GATT server");
+      } else {
+        mGattServerCallback.setGattServer(mBluetoothGattServer);
+        if (BleConnectorApplication.getInstance().useCurrentTimeService())
+          mGattServerCallback.getService(GattServerCallback.CURRENT_TIME_SERVICE).registerService(this);
+        if (BleConnectorApplication.getInstance().useBatteryService())
+          mGattServerCallback.getService(GattServerCallback.BATTERY_SERVICE).registerService(this);
+      }
+    } else
+      Log.e(getClass().getSimpleName(), "Null BluetoothManager object");
+  }
+
+  public boolean isServerStarted() {
+    return mBluetoothGattServer != null;
+  }
+
+  public void stopServer() {
     if (mBluetoothGattServer != null) {
       mBluetoothGattServer.close();
       mBluetoothGattServer = null;
@@ -170,8 +194,6 @@ public class GattActivity extends AppCompatActivity {
     if(mBluetoothLeAdvertiser != null)
       mBluetoothLeAdvertiser.stopAdvertising(mLeAdvertiseCallback);
   }
-
-
 
   public GattCallback getGattCallback() {
     return mGattCallback;

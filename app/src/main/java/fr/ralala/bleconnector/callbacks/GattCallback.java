@@ -69,7 +69,7 @@ public class GattCallback extends BluetoothGattCallback {
     mPendingCharacteristicRead.addAll(items);
     if (!mBluetoothGatt.readCharacteristic(items.get(0).characteristic)) {
       mGattActivity.progressDismiss();
-      items.get(0).characteristic.setValue(mGattActivity.getString(R.string.data_error));
+      items.get(0).characteristic.setValue(mGattActivity.getString(R.string.error));
       mGattReadListAdapter.notifyDataSetChanged();
     }
   }
@@ -146,7 +146,7 @@ public class GattCallback extends BluetoothGattCallback {
         mGattActivity.runOnUiThread(() -> mGattActivity.progressDismiss());
       } else {
         if (!mBluetoothGatt.readCharacteristic(mPendingCharacteristicRead.get(0).characteristic)) {
-          mPendingCharacteristicRead.get(0).characteristic.setValue(mGattActivity.getString(R.string.data_error));
+          mPendingCharacteristicRead.get(0).characteristic.setValue(mGattActivity.getString(R.string.error));
           mGattActivity.runOnUiThread(() -> {
             mGattReadListAdapter.notifyDataSetChanged();
             mGattActivity.progressDismiss();
@@ -180,7 +180,7 @@ public class GattCallback extends BluetoothGattCallback {
       int props = charac.getProperties();
       if ((props & BluetoothGattCharacteristic.PROPERTY_READ) != 0 && (props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) == 0) {
         if (!mBluetoothGatt.readCharacteristic(charac)) {
-          item.characteristic.setValue(mGattActivity.getString(R.string.data_error));
+          item.characteristic.setValue(mGattActivity.getString(R.string.error));
           mGattActivity.runOnUiThread(() -> {
             mGattWriteListAdapter.notifyDataSetChanged();
             mGattActivity.progressDismiss();
@@ -226,7 +226,7 @@ public class GattCallback extends BluetoothGattCallback {
         error = mGattActivity.getString(R.string.data_error_gatt_operation_failed);
         break;
       default:
-        error = mGattActivity.getString(R.string.data_error);
+        error = mGattActivity.getString(R.string.error);
     }
     return error;
   }
