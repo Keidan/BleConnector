@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
     mItemDisconnect.setVisible(mActivity.getBluetoothGatt() != null);
     mItemScan = menu.findItem(R.id.action_scan);
     mItemReadAll = menu.findItem(R.id.action_read_all);
-    mItemScan.setVisible(true);
+    updateMenuVisibility(mViewPager.getCurrentItem());
     super.onCreateOptionsMenu(menu, inflater);
   }
 
@@ -137,8 +137,7 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
 
   }
 
-  @Override
-  public void onPageSelected(int position) {
+  private void updateMenuVisibility(int position) {
     switch (position) {
       case SCAN_PAGE_INDEX:
         mItemDisconnect.setVisible(false);
@@ -160,8 +159,12 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
         mItemScan.setVisible(false);
         mItemReadAll.setVisible(false);
         break;
-
     }
+  }
+
+  @Override
+  public void onPageSelected(int position) {
+    updateMenuVisibility(position);
     if(position != oldPage) {
       if(mFragments.get(oldPage).isLocked()) {
         mViewPager.setCurrentItem(oldPage);
