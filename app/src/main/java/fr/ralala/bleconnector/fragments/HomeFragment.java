@@ -9,6 +9,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,10 +38,20 @@ import fr.ralala.bleconnector.fragments.tabs.TabFragmentWrite;
 public class HomeFragment extends Fragment implements ViewPager.OnPageChangeListener {
   private static final int SCAN_PAGE_INDEX = 0;
   private static final int INSPECT_PAGE_INDEX = 1;
+  private static final int READALL_PAGE_INDEX = 2;
   private MainActivity mActivity;
   private List<GenericTabFragment> mFragments = new ArrayList<>();
   private int oldPage = SCAN_PAGE_INDEX;
   private ViewPager mViewPager;
+  private MenuItem mItemDisconnect;
+  private MenuItem mItemScan;
+  private MenuItem mItemReadAll;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setHasOptionsMenu(true);
+  }
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -53,6 +66,17 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
     tabLayout.setupWithViewPager(mViewPager);
     mViewPager.addOnPageChangeListener(this);
     return root;
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.fragment_home, menu);
+    mItemDisconnect = menu.findItem(R.id.action_disconnect);
+    mItemDisconnect.setVisible(mActivity.getBluetoothGatt() != null);
+    mItemScan = menu.findItem(R.id.action_scan);
+    mItemReadAll = menu.findItem(R.id.action_read_all);
+    mItemScan.setVisible(true);
+    super.onCreateOptionsMenu(menu, inflater);
   }
 
   private void setupViewPager(ViewPager viewPager) {
@@ -98,15 +122,46 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
       }
   }
 
-
   private void addToViewPager(ViewPagerAdapter adapter, GenericTabFragment fragment, String title) {
     adapter.addFragment(fragment, title);
     fragment.setHomeFragment(this);
     mFragments.add(fragment);
   }
 
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if(!mFragments.get(mViewPager.getCurrentItem()).onMenuClicked(item))
+      return super.onOptionsItemSelected(item);
+    return true;
+
+  }
+
   @Override
   public void onPageSelected(int position) {
+    switch (position) {
+      case SCAN_PAGE_INDEX:
+        mItemDisconnect.setVisible(false);
+        mItemScan.setVisible(true);
+        mItemReadAll.setVisible(false);
+        break;
+      case INSPECT_PAGE_INDEX:
+        mItemDisconnect.setVisible(mActivity.getBluetoothGatt() != null);
+        mItemScan.setVisible(false);
+        mItemReadAll.setVisible(false);
+        break;
+      case READALL_PAGE_INDEX:
+        mItemDisconnect.setVisible(false);
+        mItemScan.setVisible(false);
+        mItemReadAll.setVisible(true);
+        break;
+      default:
+        mItemDisconnect.setVisible(false);
+        mItemScan.setVisible(false);
+        mItemReadAll.setVisible(false);
+        break;
+
+    }
     if(position != oldPage) {
       if(mFragments.get(oldPage).isLocked()) {
         mViewPager.setCurrentItem(oldPage);

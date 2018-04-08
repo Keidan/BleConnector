@@ -1,6 +1,7 @@
 package fr.ralala.bleconnector.fragments.tabs;
 
 import android.support.v4.app.Fragment;
+import android.view.MenuItem;
 
 import fr.ralala.bleconnector.fragments.HomeFragment;
 
@@ -15,6 +16,13 @@ import fr.ralala.bleconnector.fragments.HomeFragment;
  */
 public abstract class GenericTabFragment extends Fragment {
   protected HomeFragment mHomeFragment;
+
+  /**
+   * Called when a menu is clicked.
+   * @param mi The menu.
+   * @return true if consumed.
+   */
+  public abstract boolean onMenuClicked(MenuItem mi);
 
   /**
    * Sets the reference to the home fragment.

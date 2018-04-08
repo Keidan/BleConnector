@@ -38,16 +38,10 @@ public class TabFragmentRead extends GenericTabFragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
     mActivity = (MainActivity)getActivity();
     assert mActivity != null;
   }
 
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_tab_read, menu);
-    super.onCreateOptionsMenu(menu, inflater);
-  }
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -114,10 +108,13 @@ public class TabFragmentRead extends GenericTabFragment {
     mActivity.getGattCallback().setGattReadListAdapter(gattReadListAdapter);
   }
 
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
+  /**
+   * Called when a menu is clicked.
+   * @param mi The menu.
+   * @return true if consumed.
+   */
+  public boolean onMenuClicked(MenuItem mi) {
+    switch (mi.getItemId()) {
       case R.id.action_read_all:
         if(mActivity.getBluetoothGatt() == null) {
           Toast.makeText(mActivity, R.string.scan_and_connect_before, Toast.LENGTH_SHORT).show();
@@ -127,10 +124,10 @@ public class TabFragmentRead extends GenericTabFragment {
         if(!mList.isEmpty()) {
           mActivity.progressShow();
           mActivity.getGattCallback().readCharacteristics(mList);
+          return true;
         }
         break;
     }
-    return true;
-
+    return false;
   }
 }

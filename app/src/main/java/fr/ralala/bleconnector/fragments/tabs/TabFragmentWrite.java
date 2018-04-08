@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -66,12 +67,6 @@ public class TabFragmentWrite extends GenericTabFragment {
     super.onCreate(savedInstanceState);
     mActivity = (MainActivity)getActivity();
     assert mActivity != null;
-  }
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_tab_read, menu);
-    super.onCreateOptionsMenu(menu, inflater);
   }
 
   @Override
@@ -163,6 +158,15 @@ public class TabFragmentWrite extends GenericTabFragment {
   public void onResume() {
     super.onResume();
     notifyServicesDiscovered();
+  }
+
+  /**
+   * Called when a menu is clicked.
+   * @param mi The menu.
+   * @return true if consumed.
+   */
+  public boolean onMenuClicked(MenuItem mi) {
+    return false;
   }
 
 

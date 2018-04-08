@@ -3,8 +3,6 @@ package fr.ralala.bleconnector.fragments.tabs;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +24,11 @@ import fr.ralala.bleconnector.callbacks.GattCallback;
  */
 public class TabFragmentInspect extends GenericTabFragment {
   private MainActivity mActivity;
-  private MenuItem mItemDisconnect;
   private TabFragmentInspectListAdapter mTabFragmentInspectListAdapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
     mActivity = (MainActivity)getActivity();
     assert mActivity != null;
   }
@@ -61,35 +57,21 @@ public class TabFragmentInspect extends GenericTabFragment {
     }
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    if(mItemDisconnect != null )
-      mItemDisconnect.setVisible(mActivity.getBluetoothGatt() != null);
-  }
-
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_tab_inspect, menu);
-    mItemDisconnect = menu.findItem(R.id.action_disconnect);
-    mItemDisconnect.setVisible(mActivity.getBluetoothGatt() != null);
-    super.onCreateOptionsMenu(menu, inflater);
-  }
-
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
+  /**
+   * Called when a menu is clicked.
+   * @param mi The menu.
+   * @return true if consumed.
+   */
+  public boolean onMenuClicked(MenuItem mi) {
+    switch (mi.getItemId()) {
       case R.id.action_disconnect:
         mActivity.closeGATT();
-        mItemDisconnect.setVisible(false);
+        mi.setVisible(false);
         mHomeFragment.requestClear();
         mHomeFragment.switchToScan();
-        break;
+        return true;
     }
-    return true;
-
+    return false;
   }
 
   /**
