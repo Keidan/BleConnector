@@ -29,6 +29,7 @@ public class TabFragmentWriteListAdapter extends ArrayAdapter<TabFragmentWriteLi
   private final static int ID = R.layout.itme_list_write;
   private final Context mContext;
   private final List<TabFragmentWriteListAdapter.Item> mItems;
+  private String mPreviousService = null;
 
   private class ViewHolder {
     TextView tvNameService;
@@ -122,7 +123,13 @@ public class TabFragmentWriteListAdapter extends ArrayAdapter<TabFragmentWriteLi
     final TabFragmentWriteListAdapter.Item o = getItem(position);
     if (o != null) {
       String uuid = o.characteristic.getUuid().toString();
-      holder.tvNameService.setText(o.srvName == null ? o.srvUUID : o.srvName);
+      String tvNameService = o.srvName == null ? o.srvUUID : o.srvName;
+      if(mPreviousService == null || !mPreviousService.equals(tvNameService)) {
+        holder.tvNameService.setVisibility(View.VISIBLE);
+        holder.tvNameService.setText(tvNameService);
+        mPreviousService = tvNameService;
+      } else
+        holder.tvNameService.setVisibility(View.GONE);
       holder.tvName.setText(BleConnectorApplication.getInstance().getGattHelper().lookup(uuid, mContext.getString(R.string.unknown_characteristic), false));
       holder.tvUUID.setText(GattHelper.fixUUID(uuid));
       if((o.characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
