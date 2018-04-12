@@ -131,10 +131,7 @@ public class HomeFragment extends Fragment implements ViewPager.OnPageChangeList
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if(!mFragments.get(mViewPager.getCurrentItem()).onMenuClicked(item))
-      return super.onOptionsItemSelected(item);
-    return true;
-
+    return mFragments.get(mViewPager.getCurrentItem()).onMenuClicked(item) || super.onOptionsItemSelected(item);
   }
 
   private void updateMenuVisibility(int position) {
