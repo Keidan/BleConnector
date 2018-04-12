@@ -3,6 +3,7 @@ package fr.ralala.bleconnector.callbacks;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.os.Handler;
@@ -70,6 +71,21 @@ public class GattCallback extends BluetoothGattCallback {
    */
   public void setGattWriteListAdapter(TabFragmentWriteListAdapter gattWriteListAdapter) {
     mGattWriteListAdapter = gattWriteListAdapter;
+  }
+
+  /**
+   * Enable or disable characteristic notification
+   * @param characteristic The target characteristic.
+   * @param enabled The status.
+   */
+  public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
+    Log.e(getClass().getSimpleName(), "setCharacteristicNotification: Characteristic: " + characteristic.getUuid() + ", status: " + enabled);
+    mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+    for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
+      descriptor.setValue(enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE  : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+      Log.e(getClass().getSimpleName(), "setCharacteristicNotification:   Descriptor: " + descriptor.getUuid());
+      mBluetoothGatt.writeDescriptor(descriptor);
+    }
   }
 
   /**
@@ -242,6 +258,47 @@ public class GattCallback extends BluetoothGattCallback {
       mPendingCharacteristicWrite.remove(0);
       mActivity.runOnUiThread(() -> mActivity.progressDismiss());
     }
+  }
+
+  /**
+   * Callback triggered as a result of a remote characteristic notification.
+   *
+   * @param gatt GATT client the characteristic is associated with
+   * @param characteristic Characteristic that has been updated as a result
+   *                       of a remote notification event.
+   */
+  @Override
+  public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+
+    Log.e(getClass().getSimpleName(), "onCharacteristicChanged: characteristic: " + characteristic);
+  }
+
+  /**
+   * Callback reporting the result of a descriptor read operation.
+   *
+   * @param gatt GATT client invoked {@link BluetoothGatt#readDescriptor}
+   * @param descriptor Descriptor that was read from the associated
+   *                   remote device.
+   * @param status {@link BluetoothGatt#GATT_SUCCESS} if the read operation
+   *               was completed successfully
+   */
+  @Override
+  public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+    Log.e(getClass().getSimpleName(), "onDescriptorRead: desc: " + descriptor + ", status: " + status);
+  }
+
+  /**
+   * Callback indicating the result of a descriptor write operation.
+   *
+   * @param gatt GATT client invoked {@link BluetoothGatt#writeDescriptor}
+   * @param descriptor Descriptor that was writte to the associated
+   *                   remote device.
+   * @param status The result of the write operation
+   *               {@link BluetoothGatt#GATT_SUCCESS} if the operation succeeds.
+   */
+  @Override
+  public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+    Log.e(getClass().getSimpleName(), "onDescriptorWrite: desc: " + descriptor + ", status: " + status);
   }
 
   /**
