@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import fr.ralala.bleconnector.BleConnectorApplication;
 import fr.ralala.bleconnector.R;
 
+import static fr.ralala.bleconnector.utils.gatt.Helper.toU8;
 import static fr.ralala.bleconnector.utils.gatt.Helper.toU16;
 import static fr.ralala.bleconnector.utils.gatt.Helper.toU32;
 import static fr.ralala.bleconnector.utils.gatt.Helper.bytesToString;
@@ -75,6 +76,9 @@ public class GattHelper {
           case "string":
             data = bytesToString(bytes) + unit;
             break;
+          case "u8":
+            data = String.format(Locale.US, "%02d ", toU8(bytes[0])) + unit;
+            break;
           case "u32":
             data = String.format(Locale.US, "%02d ", toU32(bytes)) + unit;
             break;
@@ -117,6 +121,11 @@ public class GattHelper {
                       sbData.append(s);
                       break;
                     }
+                    case "u8": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      sbData.append(String.format(Locale.US, "%02d", toU8(bs[0]))).append(unit);
+                      break;
+                    }
                     case "u16": {
                       byte bs[] = copyBytes(bytes, length, start);
                       if(usb_PnP_found && start == 1 && length == 2) {
@@ -126,6 +135,11 @@ public class GattHelper {
                       } else
                         sbData.append(String.format(Locale.US, "%02d", (direction.equals("normal")) ?
                             toU16(bs[0], bs[1]) : toU16(bs[1], bs[0]))).append(unit);
+                      break;
+                    }
+                    case "u32": {
+                      byte bs[] = copyBytes(bytes, length, start);
+                      sbData.append(String.format(Locale.US, "%02d", toU32(bs))).append(unit);
                       break;
                     }
                     case "u16_time": {
