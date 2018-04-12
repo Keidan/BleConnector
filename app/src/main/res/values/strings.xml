@@ -59,8 +59,8 @@
     <string name="value_hint_hex">Value in hex</string>
     <string name="value_hint_hex_array">Value in hex (eg: 0x00 0x00 etc&#8230;)</string>
     <string name="error_write_characteristic">Unable to write characteristic</string>
-    <string name="gatt_tab_scan">Scan</string>>
-    <string name="gatt_tab_inspect">Inspect</string>>
+    <string name="gatt_tab_scan">Scan</string>
+    <string name="gatt_tab_inspect">Inspect</string>
     <string name="gatt_tab_read">Read</string>
     <string name="gatt_tab_write">Write</string>
     <string name="read_all">Read All</string>
