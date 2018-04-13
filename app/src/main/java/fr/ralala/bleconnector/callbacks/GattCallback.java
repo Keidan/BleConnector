@@ -15,9 +15,7 @@ import java.util.List;
 
 import fr.ralala.bleconnector.MainActivity;
 import fr.ralala.bleconnector.R;
-import fr.ralala.bleconnector.adapters.TabFragmentInspectListAdapter;
-import fr.ralala.bleconnector.adapters.TabFragmentReadListAdapter;
-import fr.ralala.bleconnector.adapters.TabFragmentWriteListAdapter;
+import fr.ralala.bleconnector.adapters.TabFragmentDetailsListAdapter;
 
 /********************************************************************************
  * <p><b>Project BleConnector</b><br/>
@@ -33,13 +31,11 @@ public class GattCallback extends BluetoothGattCallback {
   private static final String TAG = "GattCallback";
   private MainActivity mActivity;
   private BluetoothGatt mBluetoothGatt;
-  private TabFragmentInspectListAdapter mGattInspectListAdapter;
-  private TabFragmentReadListAdapter mGattReadListAdapter;
-  private TabFragmentWriteListAdapter mGattWriteListAdapter;
+  private TabFragmentDetailsListAdapter mGattDetailsListAdapter;
   private Handler mHandler = new Handler();
   private Runnable mRunnable;
-  private List<TabFragmentReadListAdapter.Item> mPendingCharacteristicRead;
-  private List<TabFragmentWriteListAdapter.Item> mPendingCharacteristicWrite;
+  private List<BluetoothGattCharacteristic> mPendingCharacteristicRead;
+  private List<BluetoothGattCharacteristic> mPendingCharacteristicWrite;
 
   public GattCallback(MainActivity gattActivity) {
     mActivity = gattActivity;
@@ -52,25 +48,11 @@ public class GattCallback extends BluetoothGattCallback {
   }
 
   /**
-   * Set the reference to the TabFragmentInspectListAdapter object.
-   * @param gattInspectListAdapter TabFragmentInspectListAdapter
+   * Set the reference to the TabFragmentDetailsListAdapter object.
+   * @param gattDetailsListAdapter TabFragmentDetailsListAdapter
    */
-  public void setGattInspectListAdapter(TabFragmentInspectListAdapter gattInspectListAdapter) {
-    mGattInspectListAdapter = gattInspectListAdapter;
-  }
-  /**
-   * Set the reference to the TabFragmentReadListAdapter object.
-   * @param gattReadListAdapter TabFragmentReadListAdapter
-   */
-  public void setGattReadListAdapter(TabFragmentReadListAdapter gattReadListAdapter) {
-    mGattReadListAdapter = gattReadListAdapter;
-  }
-  /**
-   * Set the reference to the TabFragmentWriteListAdapter object.
-   * @param gattWriteListAdapter TabFragmentWriteListAdapter
-   */
-  public void setGattWriteListAdapter(TabFragmentWriteListAdapter gattWriteListAdapter) {
-    mGattWriteListAdapter = gattWriteListAdapter;
+  public void setGattDetailsListAdapter(TabFragmentDetailsListAdapter gattDetailsListAdapter) {
+    mGattDetailsListAdapter = gattDetailsListAdapter;
   }
 
   /**
@@ -90,29 +72,29 @@ public class GattCallback extends BluetoothGattCallback {
 
   /**
    * Reads characteristics.
-   * @param items The characteristics to write.
+   * @param characteristics The characteristics to write.
    */
-  public void readCharacteristics(List<TabFragmentReadListAdapter.Item> items) {
-    if(items.isEmpty()) {
+  public void readCharacteristics(List<BluetoothGattCharacteristic> characteristics) {
+    if(characteristics.isEmpty()) {
       mActivity.progressDismiss();
       return;
     }
-    mPendingCharacteristicRead.addAll(items);
-    if (!mBluetoothGatt.readCharacteristic(items.get(0).characteristic)) {
+    mPendingCharacteristicRead.addAll(characteristics);
+    if (!mBluetoothGatt.readCharacteristic(characteristics.get(0))) {
       mActivity.progressDismiss();
-      items.get(0).characteristic.setValue(mActivity.getString(R.string.error));
-      mGattReadListAdapter.notifyDataSetChanged();
+      characteristics.get(0).setValue(mActivity.getString(R.string.error));
+      mGattDetailsListAdapter.notifyDataSetChanged();
     }
   }
 
   /**
    * Write a characteristic.
-   * @param item The characteristic to write.
+   * @param characteristic The characteristic to write.
    * @return false on error, true else.
    */
-  public boolean writeCharacteristic(TabFragmentWriteListAdapter.Item item) {
-    if(mBluetoothGatt.writeCharacteristic(item.characteristic)) {
-      mPendingCharacteristicWrite.add(item);
+  public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+    if(mBluetoothGatt.writeCharacteristic(characteristic)) {
+      mPendingCharacteristicWrite.add(characteristic);
       return true;
     } else
       return false;
@@ -165,13 +147,13 @@ public class GattCallback extends BluetoothGattCallback {
     if (status == BluetoothGatt.GATT_SUCCESS) {
       Log.w(TAG, "onServicesDiscovered ACTION_GATT_SERVICES_DISCOVERED");
       abort();
-      if(mGattInspectListAdapter != null)
+      if(mGattDetailsListAdapter != null)
         mActivity.runOnUiThread(() -> {
-          mGattInspectListAdapter.clear();
+          mGattDetailsListAdapter.clear();
           for (BluetoothGattService service : gatt.getServices()) {
-            mGattInspectListAdapter.add(service);
+            mGattDetailsListAdapter.add(service);
           }
-          mGattInspectListAdapter.notifyDataSetChanged();
+          mGattDetailsListAdapter.notifyDataSetChanged();
           mActivity.notifyServicesDiscovered();
           mActivity.progressDismiss();
         });
@@ -192,33 +174,33 @@ public class GattCallback extends BluetoothGattCallback {
     Log.i(TAG, "onCharacteristicRead: " + status + " - " + characteristic);
     if(!mPendingCharacteristicRead.isEmpty()) {
       if (status == BluetoothGatt.GATT_SUCCESS) {
-        BluetoothGattCharacteristic charac = mPendingCharacteristicRead.get(0).characteristic;
+        BluetoothGattCharacteristic charac = mPendingCharacteristicRead.get(0);
         charac.setValue(characteristic.getValue());
-        mActivity.runOnUiThread(() -> mGattReadListAdapter.notifyDataSetChanged());
+        mActivity.runOnUiThread(() -> mGattDetailsListAdapter.notifyDataSetChanged());
       } else {
-        mPendingCharacteristicRead.get(0).characteristic.setValue(getGattError(status));
-        mActivity.runOnUiThread(() -> mGattReadListAdapter.notifyDataSetChanged());
+        mPendingCharacteristicRead.get(0).setValue(getGattError(status));
+        mActivity.runOnUiThread(() -> mGattDetailsListAdapter.notifyDataSetChanged());
       }
       mPendingCharacteristicRead.remove(0);
       if (mPendingCharacteristicRead.isEmpty()) {
         mActivity.runOnUiThread(() -> mActivity.progressDismiss());
       } else {
-        if (!mBluetoothGatt.readCharacteristic(mPendingCharacteristicRead.get(0).characteristic)) {
-          mPendingCharacteristicRead.get(0).characteristic.setValue(mActivity.getString(R.string.error));
+        if (!mBluetoothGatt.readCharacteristic(mPendingCharacteristicRead.get(0))) {
+          mPendingCharacteristicRead.get(0).setValue(mActivity.getString(R.string.error));
           mActivity.runOnUiThread(() -> {
-            mGattReadListAdapter.notifyDataSetChanged();
+            mGattDetailsListAdapter.notifyDataSetChanged();
             mActivity.progressDismiss();
           });
         }
       }
     } else if(!mPendingCharacteristicWrite.isEmpty()) {
       if (status == BluetoothGatt.GATT_SUCCESS) {
-        BluetoothGattCharacteristic charac = mPendingCharacteristicWrite.get(0).characteristic;
+        BluetoothGattCharacteristic charac = mPendingCharacteristicWrite.get(0);
         mPendingCharacteristicWrite.remove(0);
         charac.setValue(characteristic.getValue());
       }
       mActivity.runOnUiThread(() -> {
-        mGattWriteListAdapter.notifyDataSetChanged();
+        mGattDetailsListAdapter.notifyDataSetChanged();
         mActivity.progressDismiss();
       });
     }
@@ -233,20 +215,19 @@ public class GattCallback extends BluetoothGattCallback {
   public void onCharacteristicWrite(BluetoothGatt gatt,
                                     BluetoothGattCharacteristic characteristic, int status) {
     Log.i(TAG, "onCharacteristicWrite: " + status + " - " + characteristic);
-    TabFragmentWriteListAdapter.Item item = mPendingCharacteristicWrite.get(0);
-    BluetoothGattCharacteristic charac = item.characteristic;
+    BluetoothGattCharacteristic charac = mPendingCharacteristicWrite.get(0);
     if(!mPendingCharacteristicRead.isEmpty())
-      item.characteristic.setValue(characteristic.getValue());
+      charac.setValue(characteristic.getValue());
     else
-      item.characteristic.setValue(getGattError(status));
-    mActivity.runOnUiThread(() -> mGattWriteListAdapter.notifyDataSetChanged());
+      charac.setValue(getGattError(status));
+    mActivity.runOnUiThread(() -> mGattDetailsListAdapter.notifyDataSetChanged());
     if (status == BluetoothGatt.GATT_SUCCESS) {
       int props = charac.getProperties();
       if ((props & BluetoothGattCharacteristic.PROPERTY_READ) != 0 && (props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) == 0) {
         if (!mBluetoothGatt.readCharacteristic(charac)) {
-          item.characteristic.setValue(mActivity.getString(R.string.error));
+          charac.setValue(mActivity.getString(R.string.error));
           mActivity.runOnUiThread(() -> {
-            mGattWriteListAdapter.notifyDataSetChanged();
+            mGattDetailsListAdapter.notifyDataSetChanged();
             mActivity.progressDismiss();
           });
         }

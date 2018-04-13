@@ -16,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -84,11 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       mNavigationView.getMenu().getItem(0).setChecked(true);
     }
     mFragments = new AppFragmentsFactory(mNavigationView);
-    displayView(mFragments.getDefaultHomeId());
-    mProgress = UIHelper.showCircularProgressDialog(this, (dialog) -> {
-      closeGATT();
-      switchToScan();
-    });
+    displayView(mFragments.getDefaultDevicesId());
+    mProgress = UIHelper.showCircularProgressDialog(this, (dialog) -> mFragments.switchToScan(true));
 
     if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
       Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
@@ -141,13 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   }
 
   /**
-   * Request to switch to the scan fragment.
-   */
-  public void switchToScan() {
-    mFragments.switchToScan();
-  }
-
-  /**
    * Returns the reference to the BluetoothLeScanner object.
    * @return BluetoothLeScanner
    */
@@ -187,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if (mViewIsAtHome)
       mDrawer.openDrawer(Gravity.START);
     else { //if the current view is not the News fragment
-      displayView(mFragments.getDefaultHomeId()); //display the home fragment
-      mNavigationView.getMenu().getItem(mFragments.getDefaultHomeIndex()).setChecked(true); /* select home title */
+      displayView(mFragments.getDefaultDevicesId()); //display the home fragment
+      mNavigationView.getMenu().getItem(mFragments.getDefaultDevicesIndex()).setChecked(true); /* select home title */
       return;
     }
     if (mLastBackPressed + BACK_TIME_DELAY > System.currentTimeMillis()) {
@@ -235,11 +226,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void displayView(int viewId) {
     String title = getString(R.string.app_title);
 
-    mViewIsAtHome = mFragments.getDefaultHomeId() == viewId;
+    mViewIsAtHome = mFragments.getDefaultDevicesId() == viewId;
     switch (viewId) {
-      case R.id.nav_home:
-        mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_HOMME);
-        title = getString(R.string.home);
+      case R.id.nav_devices:
+        mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_DEVICES);
+        title = getString(R.string.gatt_tab_scan);
         break;
       case R.id.nav_server:
         mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_SERVER);
@@ -260,10 +251,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // set the toolbar title
     if (getSupportActionBar() != null) {
-      getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + title);
+      setSubTitle(title);
     }
 
     if(mDrawer != null) mDrawer.closeDrawer(GravityCompat.START);
+  }
+
+  /**
+   * Sets the application title.
+   * @param title The new title, null for default title.
+   */
+  public void setSubTitle(String title) {
+    ActionBar ab = getSupportActionBar();
+    if (ab != null) {
+      ab.setTitle(getString(R.string.app_name));
+      ab.setSubtitle(title == null ? getString(R.string.gatt_tab_scan) : title);
+    }
   }
 
 

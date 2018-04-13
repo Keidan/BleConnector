@@ -1,5 +1,6 @@
 package fr.ralala.bleconnector.adapters;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -121,12 +122,14 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
     }
     final ScanResult o = getItem(position);
     if (o != null) {
-      String name = o.getDevice().getName();
-      if(name == null || name.isEmpty())
-        holder.tvName.setText(R.string.unknown);
+      BluetoothDevice bd = o.getDevice();
+      String name = bd.getName();
+      if(name == null || name.trim().isEmpty())
+        name = mContext.getString(R.string.unknown);
       else
-        holder.tvName.setText(o.getDevice().getName());
-      holder.tvAddress.setText(o.getDevice().getAddress());
+        name = bd.getName().trim();
+      holder.tvName.setText(name);
+      holder.tvAddress.setText(bd.getAddress());
       holder.tvRssi.setText(String.valueOf(o.getRssi()));
     }
     return v;

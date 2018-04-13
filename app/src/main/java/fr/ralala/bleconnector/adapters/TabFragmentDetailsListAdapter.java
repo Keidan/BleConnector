@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -24,13 +27,15 @@ import fr.ralala.bleconnector.utils.gatt.GattHelper;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
+public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
   private final Context mContext;
   private List<BluetoothGattService> mListDataHeader; // header titles
   // child data in format of header title, child title
   private HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> mListDataChild;
   private LayoutInflater mInflater;
   private final ViewGroup mNullParent = null;
+  private OnImageClick mOnImageClick;
+  private ExpandableListView mExpandableListView;
 
   private class ViewHolderHeader {
     TextView tvName;
@@ -41,18 +46,35 @@ public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
     TextView tvName;
     TextView tvUUID;
     TextView tvProperties;
+    TextView tvData;
+    TableRow trData;
+    ImageView ivDownload;
+    ImageView ivUpload;
+  }
+
+
+  public interface OnImageClick {
+    /**
+     * Called when the user clicks on an image.
+     * @param download True if the download image is clicked, false for the upload image.
+     * @param groupPosition The position of the group that the child resides in.
+     * @param childPosition The position of the child with respect to other children in the group.
+     */
+    void onImageClick(boolean download, int groupPosition, int childPosition);
   }
 
   /**
    * Creates the array adapter.
    * @param context The Android context.
    */
-  public TabFragmentInspectListAdapter(final Context context, List<BluetoothGattService> listDataHeader,
-                                       HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> listDataChild) {
+  public TabFragmentDetailsListAdapter(final Context context, ExpandableListView ExpandableListView, List<BluetoothGattService> listDataHeader,
+                                       HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> listDataChild, OnImageClick imageClick) {
     mContext = context;
+    mExpandableListView = ExpandableListView;
     mListDataChild = listDataChild;
     mListDataHeader = listDataHeader;
     mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    mOnImageClick = imageClick;
   }
 
   /**
@@ -72,16 +94,26 @@ public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
     mListDataChild.put(service, service.getCharacteristics());
   }
 
+  public void expandAll() {
+    for(int i = getGroupCount() - 1; i >= 0; i--)
+      mExpandableListView.expandGroup(i);
+  }
+
+  public void collapseAll() {
+    for(int i = getGroupCount() - 1; i >= 0; i--)
+      mExpandableListView.collapseGroup(i);
+  }
+
   /**
    * Gets the data associated with the given child within the given group.
    * @param groupPosition The position of the group that the child resides in.
-   * @param childPosititon The position of the child with respect to other children in the group.
+   * @param childPosition The position of the child with respect to other children in the group.
    * @return The data of the child.
    */
   @Override
-  public Object getChild(int groupPosition, int childPosititon) {
+  public Object getChild(int groupPosition, int childPosition) {
     return mListDataChild.get(mListDataHeader.get(groupPosition))
-        .get(childPosititon);
+        .get(childPosition);
   }
 
   /**
@@ -111,11 +143,17 @@ public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
     final BluetoothGattCharacteristic child = (BluetoothGattCharacteristic)getChild(groupPosition, childPosition);
     ViewHolderChild holder;
     if (convertView == null) {
-      convertView = mInflater.inflate(R.layout.expandable_list_child_inpect, mNullParent);
+      convertView = mInflater.inflate(R.layout.expandable_list_child_details, mNullParent);
       holder = new ViewHolderChild();
       holder.tvName = convertView.findViewById(R.id.tvName);
       holder.tvUUID = convertView.findViewById(R.id.tvUUID);
       holder.tvProperties = convertView.findViewById(R.id.tvProperties);
+      holder.tvData = convertView.findViewById(R.id.tvData);
+      holder.trData = convertView.findViewById(R.id.trData);
+      holder.ivDownload = convertView.findViewById(R.id.ivDownload);
+      holder.ivUpload = convertView.findViewById(R.id.ivUpload);
+      holder.ivDownload.setOnClickListener((view) -> mOnImageClick.onImageClick(true, groupPosition, childPosition));
+      holder.ivUpload.setOnClickListener((view) -> mOnImageClick.onImageClick(false, groupPosition, childPosition));
       convertView.setTag(holder);
     } else {
       holder = (ViewHolderChild) convertView.getTag();
@@ -149,6 +187,26 @@ public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
     } else
       properties = mContext.getString(R.string.unknown);
     holder.tvProperties.setText(properties);
+    int props = child.getProperties();
+    if((props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 &&
+        (props & BluetoothGattCharacteristic.PROPERTY_READ) == 0) {
+      holder.trData.setVisibility(View.GONE);
+    } else {
+      holder.trData.setVisibility(View.VISIBLE);
+      byte[] bytes = child.getValue();
+      holder.tvData.setText(bytes == null ? "" : BleConnectorApplication.getInstance().getGattHelper().convert(uuid, bytes));
+    }
+    if((props & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ||
+        (props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 ||
+        (props & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0)
+      holder.ivUpload.setVisibility(View.VISIBLE);
+    else
+      holder.ivUpload.setVisibility(View.INVISIBLE);
+
+    if((props & BluetoothGattCharacteristic.PROPERTY_READ) != 0)
+      holder.ivDownload.setVisibility(View.VISIBLE);
+    else
+      holder.ivDownload.setVisibility(View.INVISIBLE);
     return convertView;
   }
 
@@ -205,7 +263,7 @@ public class TabFragmentInspectListAdapter extends BaseExpandableListAdapter {
     BluetoothGattService header = (BluetoothGattService) getGroup(groupPosition);
     ViewHolderHeader holder;
     if (convertView == null) {
-      convertView = mInflater.inflate(R.layout.expandable_list_header_inpect, mNullParent);
+      convertView = mInflater.inflate(R.layout.expandable_list_header_details, mNullParent);
       holder = new ViewHolderHeader();
       holder.tvName = convertView.findViewById(R.id.tvName);
       holder.tvUUID = convertView.findViewById(R.id.tvUUID);

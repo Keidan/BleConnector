@@ -14,9 +14,9 @@ import fr.ralala.bleconnector.R;
  *******************************************************************************
  */
 public class AppFragmentsFactory {
-  public static final int IDX_HOMME = 0;
+  public static final int IDX_DEVICES = 0;
   public static final int IDX_SERVER = 1;
-  private Fragment mHomeFragment = null;
+  private Fragment mDevicesFragment = null;
   private Fragment mServerFragment = null;
   private Fragment mCurrentFragment = null;
   private NavigationView mNavigationView = null;
@@ -27,43 +27,43 @@ public class AppFragmentsFactory {
    */
   public AppFragmentsFactory(final NavigationView navigationView) {
     mNavigationView = navigationView;
-    if(mHomeFragment == null)
-      mHomeFragment = new HomeFragment();
+    if(mDevicesFragment == null)
+      mDevicesFragment = new DevicesFragment();
     if(mServerFragment == null)
       mServerFragment = new ServerFragment();
-    mCurrentFragment = mHomeFragment;
+    mCurrentFragment = mDevicesFragment;
   }
 
   /**
-   * Switch to inspect fragment (in home fragment).
+   * Switch to inspect fragment (in devices fragment).
    */
-  public void switchToScan() {
-    if(HomeFragment.class.isInstance(mCurrentFragment))
-      ((HomeFragment)mCurrentFragment).switchToScan();
+  public void switchToScan(boolean close) {
+    if(DevicesFragment.class.isInstance(mCurrentFragment))
+      ((DevicesFragment)mCurrentFragment).switchToScan(close);
   }
 
   /**
-   * Returns the default home id.
+   * Returns the default devices id.
    * @return int
    */
-  public int getDefaultHomeId() {
-    return R.id.nav_home;
+  public int getDefaultDevicesId() {
+    return R.id.nav_devices;
   }
 
   /**
-   * Returns the default home index.
+   * Returns the default devices index.
    * @return int
    */
-  public int getDefaultHomeIndex() {
-    return IDX_HOMME;
+  public int getDefaultDevicesIndex() {
+    return IDX_DEVICES;
   }
 
   /**
-   * Returns the default home fragment.
+   * Returns the default devices fragment.
    * @return Fragment
    */
-  private Fragment getDefaultHomeView() {
-    return mHomeFragment;
+  private Fragment getDefaultDevicesView() {
+    return mDevicesFragment;
   }
 
   /**
@@ -71,16 +71,16 @@ public class AppFragmentsFactory {
    */
   public void fixMenuSelection() {
     Fragment fragment = mCurrentFragment;
-    if(HomeFragment.class.isInstance(fragment))
-      mNavigationView.getMenu().getItem(IDX_HOMME).setChecked(true);
+    if(DevicesFragment.class.isInstance(fragment))
+      mNavigationView.getMenu().getItem(IDX_DEVICES).setChecked(true);
     else if(ServerFragment.class.isInstance(fragment))
       mNavigationView.getMenu().getItem(IDX_SERVER).setChecked(true);
   }
 
 
   public void notifyServicesDiscovered() {
-    if(HomeFragment.class.isInstance(mCurrentFragment))
-      ((HomeFragment)mCurrentFragment).notifyServicesDiscovered();
+    if(DevicesFragment.class.isInstance(mCurrentFragment))
+      ((DevicesFragment)mCurrentFragment).notifyServicesDiscovered();
   }
 
   /**
@@ -97,14 +97,14 @@ public class AppFragmentsFactory {
    */
   public void setCurrentToFragment(int idx) {
     switch (idx) {
-      case IDX_HOMME:
-        mCurrentFragment = mHomeFragment;
+      case IDX_DEVICES:
+        mCurrentFragment = mDevicesFragment;
         break;
       case IDX_SERVER:
         mCurrentFragment = mServerFragment;
         break;
       default:
-        mCurrentFragment = getDefaultHomeView();
+        mCurrentFragment = getDefaultDevicesView();
         break;
     }
   }

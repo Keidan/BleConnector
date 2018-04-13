@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import fr.ralala.bleconnector.MainActivity;
 import fr.ralala.bleconnector.R;
 import fr.ralala.bleconnector.adapters.TabFragmentScanListAdapter;
 import fr.ralala.bleconnector.callbacks.LeScanCallback;
@@ -32,15 +31,8 @@ public class TabFragmentScan extends GenericTabFragment {
   private LeScanCallback mLeScanCallback;
   // Stops scanning after 30 seconds.
   private static final long SCAN_PERIOD = 30000;
-  private MainActivity mActivity;
   private MenuItem mItem;
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    mActivity = (MainActivity)getActivity();
-    assert mActivity != null;
-  }
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -56,10 +48,18 @@ public class TabFragmentScan extends GenericTabFragment {
         stopScan(mItem);
         mActivity.progressShow();
         mActivity.connectGATT(sr);
-        mHomeFragment.switchToInspect();
+        mDevicesFragment.switchToDetails();
       }
     });
     return root;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    /* Force refresh */
+    if(mScanListAdapter != null)
+      mScanListAdapter.notifyDataSetChanged();
   }
 
   /**
@@ -104,7 +104,7 @@ public class TabFragmentScan extends GenericTabFragment {
           mActivity.getBluetoothLeScanner().startScan(mLeScanCallback);
           mScanning = true;
           mi.setTitle(R.string.stop_scan);
-          mHomeFragment.requestClear();
+          mDevicesFragment.requestClear();
         }
         return true;
     }

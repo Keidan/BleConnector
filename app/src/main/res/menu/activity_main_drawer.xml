@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_devices"
             android:checked="true"
-            android:title="@string/home"/>
+            android:title="@string/devices"/>
         <item
             android:id="@+id/nav_server"
             android:title="@string/server"/>

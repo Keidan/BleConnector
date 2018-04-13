@@ -18,5 +18,11 @@
         android:orderInCategory="100"
         android:title="@string/read_all"
         android:visible="false"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/expand_collapse_all"
+        android:orderInCategory="100"
+        android:title="@string/expand_all"
+        android:visible="false"
+        app:showAsAction="never"/>
 </menu>

@@ -1,9 +1,11 @@
 package fr.ralala.bleconnector.fragments.tabs;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
-import fr.ralala.bleconnector.fragments.HomeFragment;
+import fr.ralala.bleconnector.MainActivity;
+import fr.ralala.bleconnector.fragments.DevicesFragment;
 
 /**
  *******************************************************************************
@@ -15,7 +17,12 @@ import fr.ralala.bleconnector.fragments.HomeFragment;
  *******************************************************************************
  */
 public abstract class GenericTabFragment extends Fragment {
-  protected HomeFragment mHomeFragment;
+  protected DevicesFragment mDevicesFragment;
+  protected MainActivity mActivity;
+
+  public void setActivity(MainActivity activity) {
+    mActivity = activity;
+  }
 
   /**
    * Called when a menu is clicked.
@@ -25,11 +32,11 @@ public abstract class GenericTabFragment extends Fragment {
   public abstract boolean onMenuClicked(MenuItem mi);
 
   /**
-   * Sets the reference to the home fragment.
-   * @param homeFragment HomeFragment
+   * Sets the reference to the devices fragment.
+   * @param devicesFragment DevicesFragment
    */
-  public void setHomeFragment(HomeFragment homeFragment) {
-    mHomeFragment = homeFragment;
+  public void setDevicesFragment(DevicesFragment devicesFragment) {
+    mDevicesFragment = devicesFragment;
   }
 
   /**
