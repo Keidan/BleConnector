@@ -4,9 +4,11 @@
         <item
             android:id="@+id/nav_devices"
             android:checked="true"
+            android:icon="@drawable/ic_bluetooth_white"
             android:title="@string/devices"/>
         <item
             android:id="@+id/nav_server"
+            android:icon="@drawable/ic_server_white"
             android:title="@string/server"/>
     </group>
 </menu>
