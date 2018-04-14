@@ -12,7 +12,9 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.ParcelUuid;
+import android.os.Process;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import fr.ralala.bleconnector.callbacks.GattServerCallback;
@@ -30,6 +32,7 @@ import fr.ralala.bleconnector.utils.gatt.services.GenericService;
  * <p>
  *******************************************************************************/
 public class GattServerService extends Service{
+  private static final String EXIT_ACTION = "actionExit";
   private static final int NOTIFICATION_ID = 1001;
   private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
   private LeAdvertiseCallback mLeAdvertiseCallback;
@@ -78,6 +81,17 @@ public class GattServerService extends Service{
   @Override
   public int onStartCommand(final Intent intent, final int flags,
                             final int startId) {
+    /* Kill from notification */
+    if(intent != null && intent.getAction() != null && intent.getAction().equals(EXIT_ACTION)) {
+      // If you want to cancel the notification:
+      NotificationManagerCompat.from(this).cancel(GattServerService.NOTIFICATION_ID);
+      stopService(GattServerService.getIntent());
+      //This is used to close the notification tray
+      Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+      sendBroadcast(it);
+      Process.killProcess(Process.myPid());
+      return START_NOT_STICKY;
+    }
     startServer();
     return START_STICKY;
 
@@ -154,8 +168,13 @@ public class GattServerService extends Service{
     Intent contentIntent = new Intent(this, MainActivity.class);
     contentIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
     PendingIntent contentPendingIntent = PendingIntent.getActivity(this, 0, contentIntent, 0);
+    Intent intentAction = new Intent(this, GattServerService.class);
+    intentAction.setAction(EXIT_ACTION);
+    PendingIntent pIntent = PendingIntent.getService(this,0, intentAction, PendingIntent.FLAG_UPDATE_CURRENT);
     NotificationCompat.Builder foregroundNotification = new NotificationCompat.Builder(this, "channel_id0");
     foregroundNotification.setOngoing(true);
+    NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_exit_black, getString(R.string.service_notification_exit), pIntent).build();
+    foregroundNotification.addAction(action);
     foregroundNotification.setContentTitle(getString(R.string.service_notification_title))
         .setContentText(getString(R.string.service_notification_content))
         .setSmallIcon(R.mipmap.ic_launcher)
