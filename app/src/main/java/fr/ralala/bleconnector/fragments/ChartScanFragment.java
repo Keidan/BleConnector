@@ -132,9 +132,7 @@ public class ChartScanFragment extends Fragment {
       found = false;
       for (ScanResult res : results)
         if(res.getDevice().getAddress().equals(key)) {
-          /* only if the rssi is changed */
-          if(value.getHighestValueY() != res.getRssi())
-            value.appendData(new DataPoint(Calendar.getInstance().getTime(), res.getRssi()), true, 40);
+          value.appendData(new DataPoint(Calendar.getInstance().getTime(), res.getRssi()), true, 40);
           found = true;
           break;
         }
