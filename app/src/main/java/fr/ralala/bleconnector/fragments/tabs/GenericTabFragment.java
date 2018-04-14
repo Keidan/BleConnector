@@ -45,6 +45,10 @@ public abstract class GenericTabFragment extends Fragment {
    */
   public abstract boolean isLocked();
 
+  /**
+   * Aborts the current operation.
+   */
+  public abstract void abortProcess();
 
   /**
    * Called when the services are discovered.

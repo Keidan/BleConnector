@@ -63,6 +63,15 @@ public class TabFragmentScan extends GenericTabFragment {
   }
 
   /**
+   * Aborts the current operation.
+   */
+  @Override
+  public void abortProcess() {
+    if(mScanning)
+      stopScan(mItem);
+  }
+
+  /**
    * Called when the services are discovered.
    */
   @Override
@@ -129,7 +138,8 @@ public class TabFragmentScan extends GenericTabFragment {
     if(mScanning) {
       mScanning = false;
       mActivity.getBluetoothLeScanner().stopScan(mLeScanCallback);
-      mi.setTitle(R.string.start_scan);
+      if(mi != null)
+        mi.setTitle(R.string.start_scan);
     }
   }
 }

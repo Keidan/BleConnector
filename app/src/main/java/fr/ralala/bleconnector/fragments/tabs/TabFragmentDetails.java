@@ -83,6 +83,13 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
   }
 
   /**
+   * Aborts the current operation.
+   */
+  @Override
+  public void abortProcess() {
+  }
+
+  /**
    * Called when a menu is clicked.
    * @param mi The menu.
    * @return true if consumed.
