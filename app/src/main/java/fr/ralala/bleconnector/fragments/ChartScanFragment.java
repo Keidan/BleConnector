@@ -37,6 +37,7 @@ import fr.ralala.bleconnector.utils.UIHelper;
  *******************************************************************************
  */
 public class ChartScanFragment extends Fragment {
+  private static final int MAX_DPOINT = 40;
   private boolean mScanning;
   private MainActivity mActivity;
   private LeScanCallback mLeScanCallback = new LeScanCallback();
@@ -60,11 +61,11 @@ public class ChartScanFragment extends Fragment {
         }
       }
     });
-    mGraphView.getGridLabelRenderer().setNumHorizontalLabels(5); // only 4 because of the space
+    mGraphView.getGridLabelRenderer().setNumHorizontalLabels(5);
     mGraphView.getViewport().setXAxisBoundsManual(true);
     Calendar calendar = Calendar.getInstance();
     mGraphView.getViewport().setMinX(calendar.getTimeInMillis());
-    calendar.add(Calendar.SECOND, 40);
+    calendar.add(Calendar.SECOND, MAX_DPOINT);
     mGraphView.getViewport().setMaxX(calendar.getTimeInMillis());
     return rootView;
   }
@@ -132,7 +133,7 @@ public class ChartScanFragment extends Fragment {
       found = false;
       for (ScanResult res : results)
         if(res.getDevice().getAddress().equals(key)) {
-          value.appendData(new DataPoint(Calendar.getInstance().getTime(), res.getRssi()), true, 40);
+          value.appendData(new DataPoint(Calendar.getInstance().getTime(), res.getRssi()), true, MAX_DPOINT);
           found = true;
           break;
         }
