@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
+
+import java.util.Random;
 
 import fr.ralala.bleconnector.R;
 
@@ -24,6 +27,23 @@ import fr.ralala.bleconnector.R;
  * <p>
  *******************************************************************************/
 public class UIHelper {
+  private static final int BASE_COLOR = Color.WHITE;
+  private static final int BASE_COLOR_RED = Color.red(BASE_COLOR);
+  private static final int BASE_COLOR_GREEN = Color.green(BASE_COLOR);
+  private static final int BASE_COLOR_BLUE = Color.blue(BASE_COLOR);
+  private static final Random RANDOM = new Random(System.currentTimeMillis());
+
+  /**
+   * Generates random color (light).
+   * @return The generated color.
+   */
+  public static int generateRandomColor() {
+    // This is the base color which will be mixed with the generated one
+    final int red = (BASE_COLOR_RED + RANDOM.nextInt(256)) / 2;
+    final int green = (BASE_COLOR_GREEN + RANDOM.nextInt(256)) / 2;
+    final int blue = (BASE_COLOR_BLUE + RANDOM.nextInt(256)) / 2;
+    return Color.rgb(red, green, blue);
+  }
 
   /**
    * Displays a circular progress dialog.

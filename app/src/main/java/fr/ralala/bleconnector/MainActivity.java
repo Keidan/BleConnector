@@ -230,7 +230,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     switch (viewId) {
       case R.id.nav_devices:
         mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_DEVICES);
-        title = getString(R.string.gatt_tab_scan);
+        title = getString(R.string.chart_scan);
+        break;
+      case R.id.nav_chart_scan:
+        mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_CHART_SCAN);
+        title = getString(R.string.chart_scan);
         break;
       case R.id.nav_server:
         mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_SERVER);

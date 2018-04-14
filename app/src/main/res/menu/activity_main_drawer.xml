@@ -7,6 +7,11 @@
             android:icon="@drawable/ic_bluetooth_white"
             android:title="@string/devices"/>
         <item
+            android:id="@+id/nav_chart_scan"
+            android:checked="true"
+            android:icon="@drawable/ic_chart_white"
+            android:title="@string/chart_scan"/>
+        <item
             android:id="@+id/nav_server"
             android:icon="@drawable/ic_server_white"
             android:title="@string/server"/>

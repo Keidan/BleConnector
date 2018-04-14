@@ -15,7 +15,9 @@ import fr.ralala.bleconnector.R;
  */
 public class AppFragmentsFactory {
   public static final int IDX_DEVICES = 0;
-  public static final int IDX_SERVER = 1;
+  public static final int IDX_CHART_SCAN = 1;
+  public static final int IDX_SERVER = 2;
+  private Fragment mChartScanFragment = null;
   private Fragment mDevicesFragment = null;
   private Fragment mServerFragment = null;
   private Fragment mCurrentFragment = null;
@@ -27,6 +29,8 @@ public class AppFragmentsFactory {
    */
   public AppFragmentsFactory(final NavigationView navigationView) {
     mNavigationView = navigationView;
+    if(mChartScanFragment == null)
+      mChartScanFragment = new ChartScanFragment();
     if(mDevicesFragment == null)
       mDevicesFragment = new DevicesFragment();
     if(mServerFragment == null)
@@ -73,6 +77,8 @@ public class AppFragmentsFactory {
     Fragment fragment = mCurrentFragment;
     if(DevicesFragment.class.isInstance(fragment))
       mNavigationView.getMenu().getItem(IDX_DEVICES).setChecked(true);
+    else if(ChartScanFragment.class.isInstance(fragment))
+      mNavigationView.getMenu().getItem(IDX_CHART_SCAN).setChecked(true);
     else if(ServerFragment.class.isInstance(fragment))
       mNavigationView.getMenu().getItem(IDX_SERVER).setChecked(true);
   }
@@ -99,6 +105,11 @@ public class AppFragmentsFactory {
     switch (idx) {
       case IDX_DEVICES:
         mCurrentFragment = mDevicesFragment;
+        break;
+      case IDX_CHART_SCAN:
+        if(mCurrentFragment != null && mCurrentFragment.equals(mDevicesFragment))
+          ((DevicesFragment)mDevicesFragment).abortProcess();
+        mCurrentFragment = mChartScanFragment;
         break;
       case IDX_SERVER:
         mCurrentFragment = mServerFragment;

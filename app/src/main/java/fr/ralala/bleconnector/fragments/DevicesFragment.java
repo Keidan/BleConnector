@@ -110,6 +110,14 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
   }
 
   /**
+   * Aborts the current operation.
+   */
+  public void abortProcess() {
+    for(GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
+      fragment.abortProcess();
+  }
+
+  /**
    * Called when the services are discovered.
    */
   public void notifyServicesDiscovered() {

@@ -4,6 +4,7 @@
     <string name="app_title" translatable="false">BLE Connector</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="chart_scan">Chart</string>
     <string name="devices">Devices</string>
     <string name="server">Server</string>
     <string name="scan_running">Scanning is in progress, please stop it before.</string>
