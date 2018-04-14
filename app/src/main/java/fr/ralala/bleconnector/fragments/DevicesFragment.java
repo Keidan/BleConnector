@@ -1,5 +1,6 @@
 package fr.ralala.bleconnector.fragments;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -146,7 +147,15 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
       case DETAILS_PAGE_INDEX: {
         BluetoothGatt gatt = mActivity.getBluetoothGatt();
         boolean visible = gatt != null;
-        mActivity.setSubTitle(visible ? (gatt.getDevice().getAddress()) : null);
+        if(visible) {
+          BluetoothDevice bd = gatt.getDevice();
+          String name = bd.getName();
+          if(name != null && !name.isEmpty())
+            mActivity.setSubTitle(name);
+          else
+            mActivity.setSubTitle(gatt.getDevice().getAddress());
+        } else
+          mActivity.setSubTitle(null);
         mItemDisconnect.setVisible(visible);
         mItemScan.setVisible(false);
         mItemExpandCollapse.setVisible(visible);
