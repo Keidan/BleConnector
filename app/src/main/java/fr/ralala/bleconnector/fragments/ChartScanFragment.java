@@ -3,10 +3,12 @@ package fr.ralala.bleconnector.fragments;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,12 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import fr.ralala.bleconnector.MainActivity;
 import fr.ralala.bleconnector.R;
@@ -37,7 +41,7 @@ import fr.ralala.bleconnector.utils.UIHelper;
  *******************************************************************************
  */
 public class ChartScanFragment extends Fragment {
-  private static final int MAX_DPOINT = 40;
+  private static final int MAX_DELAY_IN_SECONDS = 40;
   private boolean mScanning;
   private MainActivity mActivity;
   private LeScanCallback mLeScanCallback = new LeScanCallback();
@@ -63,10 +67,6 @@ public class ChartScanFragment extends Fragment {
     });
     mGraphView.getGridLabelRenderer().setNumHorizontalLabels(5);
     mGraphView.getViewport().setXAxisBoundsManual(true);
-    Calendar calendar = Calendar.getInstance();
-    mGraphView.getViewport().setMinX(calendar.getTimeInMillis());
-    calendar.add(Calendar.SECOND, MAX_DPOINT);
-    mGraphView.getViewport().setMaxX(calendar.getTimeInMillis());
     return rootView;
   }
 
@@ -91,6 +91,7 @@ public class ChartScanFragment extends Fragment {
     if(mScanning) {
       mScanning = false;
       mActivity.getBluetoothLeScanner().stopScan(mLeScanCallback);
+      mGraphView.removeAllSeries();
     }
   }
 
@@ -98,11 +99,18 @@ public class ChartScanFragment extends Fragment {
    * Adds the specified ScanResult at the end of the array or replace the entry if found.
    * @param sr The ScanResult to add or replace.
    */
-  public void addScanResult(ScanResult sr) {
+  public synchronized void addScanResult(ScanResult sr, boolean lost) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeZone(TimeZone.getDefault());
     BluetoothDevice bd = sr.getDevice();
     /* adds series */
     LineGraphSeries<DataPoint> series = mSeries.get(bd.getAddress());
     if(series == null) {
+      if(mSeries.isEmpty()) {
+        mGraphView.getViewport().setMinX(calendar.getTimeInMillis());
+        calendar.add(Calendar.SECOND, MAX_DELAY_IN_SECONDS);
+        mGraphView.getViewport().setMaxX(calendar.getTimeInMillis());
+      }
       series = new LineGraphSeries<>();
       String name = bd.getName();
       if(name != null && !name.isEmpty())
@@ -120,29 +128,40 @@ public class ChartScanFragment extends Fragment {
     boolean found = false;
     for(int i = 0; i < results.size(); i++)
       if(results.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
-        results.set(i, sr);
+        if(lost)
+          results.remove(i);
+        else
+          results.set(i, sr);
         found = true;
+        break;
       }
     if(!found)
       results.add(sr);
+    try {
     /* removes useless series */
-    Map<String, LineGraphSeries<DataPoint>> dump = mSeries;
-    for (Map.Entry<String, LineGraphSeries<DataPoint>> entry : mSeries.entrySet()) {
-      String key = entry.getKey();
-      LineGraphSeries<DataPoint> value = entry.getValue();
-      found = false;
-      for (ScanResult res : results)
-        if(res.getDevice().getAddress().equals(key)) {
-          value.appendData(new DataPoint(Calendar.getInstance().getTime(), res.getRssi()), true, MAX_DPOINT);
-          found = true;
-          break;
+      Map<String, LineGraphSeries<DataPoint>> dump = mSeries;
+      calendar.setTime(new Date());
+      for (Map.Entry<String, LineGraphSeries<DataPoint>> entry : mSeries.entrySet()) {
+        String key = entry.getKey();
+        LineGraphSeries<DataPoint> value = entry.getValue();
+        found = false;
+        for (ScanResult res : results)
+          if (res.getDevice().getAddress().equals(key)) {
+            value.appendData(new DataPoint(calendar.getTimeInMillis() + 1,
+                res.getRssi()), true, MAX_DELAY_IN_SECONDS * 20);
+            found = true;
+            break;
+          }
+        if (!found) {
+          dump.remove(key);
+          mGraphView.removeSeries(value);
+          Log.i(getClass().getSimpleName(), "Removes series: " + key);
         }
-      if(!found) {
-        dump.remove(key);
-        mGraphView.removeSeries(value);
       }
+      mSeries = dump;
+    } catch(ConcurrentModificationException cme) {
+      Log.e(getClass().getSimpleName(), "ConcurrentModificationException: " + cme, cme);
     }
-    mSeries = dump;
   }
 
   private class LeScanCallback extends ScanCallback {
@@ -157,7 +176,7 @@ public class ChartScanFragment extends Fragment {
      * @param result       A Bluetooth LE scan result.
      */
     public void onScanResult(int callbackType, ScanResult result) {
-      mActivity.runOnUiThread(() -> addScanResult(result));
+      mActivity.runOnUiThread(() -> addScanResult(result, callbackType == ScanSettings.CALLBACK_TYPE_MATCH_LOST));
     }
 
     /**
@@ -169,7 +188,7 @@ public class ChartScanFragment extends Fragment {
       mActivity.getScanResults().clear();
       mActivity.runOnUiThread(() -> {
         for (ScanResult sr : results)
-          addScanResult(sr);
+          addScanResult(sr, false);
       });
     }
 

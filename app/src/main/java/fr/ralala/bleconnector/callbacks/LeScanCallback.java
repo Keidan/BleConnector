@@ -39,7 +39,10 @@ public class LeScanCallback extends ScanCallback {
    * @param result       A Bluetooth LE scan result.
    */
   public void onScanResult(int callbackType, ScanResult result) {
-    mScanListAdapter.add(result);
+    if(callbackType == ScanSettings.CALLBACK_TYPE_MATCH_LOST)
+      mScanListAdapter.remove(result);
+    else
+      mScanListAdapter.add(result);
     mActivity.runOnUiThread(() -> mScanListAdapter.notifyDataSetChanged());
   }
 

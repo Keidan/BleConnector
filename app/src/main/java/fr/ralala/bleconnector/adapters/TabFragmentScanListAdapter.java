@@ -98,6 +98,18 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
   }
 
   /**
+   * Removes the specified ScanResult.
+   * @param sr The ScanResult to remove.
+   */
+  public void remove(ScanResult sr) {
+    for(int i = 0; i < mItems.size(); i++)
+      if(mItems.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
+        mItems.remove(i);
+        break;
+      }
+  }
+
+  /**
    * Returns the current view.
    * @param position The view position.
    * @param convertView The view to convert.
