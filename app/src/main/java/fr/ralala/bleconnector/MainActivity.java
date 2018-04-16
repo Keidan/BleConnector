@@ -7,8 +7,10 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanResult;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private List<BluetoothGattService> mListDataHeader = new ArrayList<>();
   private HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> mListDataChild = new HashMap<>();
   private List<ScanResult> mScanResults = new ArrayList<>();
+  private BleStateChangedBroadcast mBleStateChangedBroadcast = new BleStateChangedBroadcast();
 
   /**
    * Called when the activity is created.
@@ -92,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
       finish();
     }
+    IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+    registerReceiver(mBleStateChangedBroadcast, filter);
     if (!AppPermissions.checkPermissions(this)) {
       AppPermissions.shouldShowRequest(this);
     } else
@@ -169,6 +174,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       startService(GattServerService.getIntent());
   }
 
+  /**
+   * Called when the activity is destroyed.
+   */
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    // Unregister broadcast listeners
+    unregisterReceiver(mBleStateChangedBroadcast);
+  }
 
   /**
    * Called to handle the click on the back button.
@@ -367,5 +381,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         break;
       }
     }
+  }
+  /*-----------------------------------------*/
+  /* BLE STATE CHANGED                       */
+  /*-----------------------------------------*/
+  private class BleStateChangedBroadcast extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String action = intent.getAction();
+      // It means the user has changed his bluetooth state.
+      if (action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+        final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+        if (state == BluetoothAdapter.STATE_TURNING_OFF) {
+          if(UIHelper.isServiceRunning(mApp, GattServerService.class))
+            stopService(GattServerService.getIntent());
+          closeGATT();
+          initialize();
+        }
+      }
+    }
+
   }
 }
