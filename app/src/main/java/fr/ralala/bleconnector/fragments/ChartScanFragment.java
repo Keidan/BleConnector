@@ -1,6 +1,7 @@
 package fr.ralala.bleconnector.fragments;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
@@ -78,8 +79,13 @@ public class ChartScanFragment extends Fragment {
     super.onResume();
     mActivity.getScanResults().clear();
     mActivity.closeGATT();
-    mActivity.getBluetoothLeScanner().startScan(mLeScanCallback);
-    mScanning = true;
+    BluetoothLeScanner scanner = mActivity.getBluetoothLeScanner();
+    if(scanner == null)
+      UIHelper.snackInfo(mActivity, getString(R.string.ble_not_enabled));
+    else {
+      mActivity.getBluetoothLeScanner().startScan(mLeScanCallback);
+      mScanning = true;
+    }
   }
 
   /**

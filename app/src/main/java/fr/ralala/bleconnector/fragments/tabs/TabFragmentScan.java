@@ -1,5 +1,6 @@
 package fr.ralala.bleconnector.fragments.tabs;
 
+import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import fr.ralala.bleconnector.R;
 import fr.ralala.bleconnector.adapters.TabFragmentScanListAdapter;
 import fr.ralala.bleconnector.callbacks.LeScanCallback;
+import fr.ralala.bleconnector.utils.UIHelper;
 
 /**
  *******************************************************************************
@@ -106,14 +108,19 @@ public class TabFragmentScan extends GenericTabFragment {
         } else {
           mActivity.closeGATT();
           mScanListAdapter.clear();
-          // Stops scanning after a pre-defined scan period.
-          Runnable run = () -> stopScan(mi);
-          mHandler.removeCallbacks(run);
-          mHandler.postDelayed(run, SCAN_PERIOD);
-          mActivity.getBluetoothLeScanner().startScan(mLeScanCallback);
-          mScanning = true;
-          mi.setTitle(R.string.stop_scan);
-          mDevicesFragment.requestClear();
+          BluetoothLeScanner scanner = mActivity.getBluetoothLeScanner();
+          if(scanner == null)
+            UIHelper.snackInfo(mActivity, getString(R.string.ble_not_enabled));
+          else {
+            // Stops scanning after a pre-defined scan period.
+            Runnable run = () -> stopScan(mi);
+            mHandler.removeCallbacks(run);
+            mHandler.postDelayed(run, SCAN_PERIOD);
+            mActivity.getBluetoothLeScanner().startScan(mLeScanCallback);
+            mScanning = true;
+            mi.setTitle(R.string.stop_scan);
+            mDevicesFragment.requestClear();
+          }
         }
         return true;
     }
