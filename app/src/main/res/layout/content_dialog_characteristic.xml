@@ -15,7 +15,7 @@
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:inputType="textVisiblePassword"
             android:hint="@string/value_hint"
             android:imeOptions="actionDone"
             android:id="@+id/editText"
