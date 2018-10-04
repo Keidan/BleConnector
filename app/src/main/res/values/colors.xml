@@ -38,4 +38,9 @@
     <color name="side_nav_bar_startColor">@color/windowBackground</color>
     <color name="side_nav_bar_centerColor">@color/colorPrimary</color>
     <color name="side_nav_bar_endColor">@color/navigationBarColor</color>
+
+
+    <color name="colorRedDark">#ff890007</color>
+    <color name="colorWhite">#fffafafa</color>
+    <color name="colorGrayLight">#ffbebebe</color>
 </resources>

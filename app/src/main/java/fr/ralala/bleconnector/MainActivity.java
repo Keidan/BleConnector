@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   private HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> mListDataChild = new HashMap<>();
   private List<ScanResult> mScanResults = new ArrayList<>();
   private BleStateChangedBroadcast mBleStateChangedBroadcast = new BleStateChangedBroadcast();
+  private RelativeLayout mRlSnackBleStatus;
 
   /**
    * Called when the activity is created.
@@ -76,6 +78,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     mApp = BleConnectorApplication.getInstance();
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    mRlSnackBleStatus = findViewById(R.id.rlSnackBleStatus);
+    findViewById(R.id.tvBleStatusAction).setOnClickListener((v) ->{
+      if (mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter.isDiscovering()) {
+          UIHelper.snackInfo(this, getString(R.string.ble_currently_in_discovery));
+        } else {
+          UIHelper.snackInfo(this, getString(R.string.ble_enabled));
+        }
+      } else {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+      }
+    });
     mDrawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -95,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
       finish();
     }
+    mRlSnackBleStatus.setVisibility(View.GONE);
     IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
     registerReceiver(mBleStateChangedBroadcast, filter);
     if (!AppPermissions.checkPermissions(this)) {
@@ -332,10 +348,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Ensures Bluetooth is available on the device and it is enabled. If not,
     // displays a dialog requesting user permission to enable Bluetooth.
     if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-      Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-      startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+      mRlSnackBleStatus.setVisibility(View.VISIBLE);
     } else {
-      UIHelper.snackInfo(this, getString(R.string.ble_enabled));
       mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
     }
   }
@@ -348,16 +362,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
    */
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_ENABLE_BT) {
-      if (mBluetoothAdapter.isEnabled()) {
-        if (mBluetoothAdapter.isDiscovering()) {
-          UIHelper.snackInfo(this, getString(R.string.ble_currently_in_discovery));
-        } else {
-          UIHelper.snackInfo(this, getString(R.string.ble_enabled));
-        }
+      final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+      if(bluetoothManager == null) {
+        mRlSnackBleStatus.setVisibility(View.VISIBLE);
       } else {
-        UIHelper.snackInfo(this, getString(R.string.ble_not_enabled));
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+          if (mBluetoothAdapter.isDiscovering()) {
+            UIHelper.snackInfo(this, getString(R.string.ble_currently_in_discovery));
+          } else {
+            mRlSnackBleStatus.setVisibility(View.GONE);
+            mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+          }
+        } else {
+          mRlSnackBleStatus.setVisibility(View.VISIBLE);
+        }
       }
     }
   }
@@ -397,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             stopService(GattServerService.getIntent());
           closeGATT();
           initialize();
+          mRlSnackBleStatus.setVisibility(View.VISIBLE);
         }
       }
     }

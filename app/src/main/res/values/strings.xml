@@ -90,4 +90,5 @@
     <string name="alert_level_high">High</string>
     <string name="start_of_affected_attribute_handle_range">Start of Affected Attr.</string>
     <string name="end_of_affected_attribute_handle_range">End of Affected Attr.</string>
+    <string name="enable">Enable</string>
 </resources>
