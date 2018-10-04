@@ -36,6 +36,7 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Creates the array adapter.
+   *
    * @param context The Android context.
    * @param objects The objects list.
    */
@@ -47,6 +48,7 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Returns an items at a specific position.
+   *
    * @param i The item index.
    * @return The item.
    */
@@ -57,6 +59,7 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Returns the position of the specified item in the array.
+   *
    * @param item The item to retrieve the position of.
    * @return The position of the specified item.
    */
@@ -67,6 +70,7 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * How many items are in the data set represented by this Adapter.
+   *
    * @return Count of items.
    */
   @Override
@@ -76,6 +80,7 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Get the row id associated with the specified position in the list.
+   *
    * @param position The position of the item within the adapter's data set whose row id we want.
    * @return The id of the item at the specified position.
    */
@@ -86,11 +91,12 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Adds the specified ScanResult at the end of the array or replace the entry if found.
+   *
    * @param sr The ScanResult to add or replace.
    */
   public void add(ScanResult sr) {
-    for(int i = 0; i < mItems.size(); i++)
-      if(mItems.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
+    for (int i = 0; i < mItems.size(); i++)
+      if (mItems.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
         mItems.set(i, sr);
         return;
       }
@@ -99,11 +105,12 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Removes the specified ScanResult.
+   *
    * @param sr The ScanResult to remove.
    */
   public void remove(ScanResult sr) {
-    for(int i = 0; i < mItems.size(); i++)
-      if(mItems.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
+    for (int i = 0; i < mItems.size(); i++)
+      if (mItems.get(i).getDevice().getAddress().equals(sr.getDevice().getAddress())) {
         mItems.remove(i);
         break;
       }
@@ -111,13 +118,15 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
 
   /**
    * Returns the current view.
-   * @param position The view position.
+   *
+   * @param position    The view position.
    * @param convertView The view to convert.
-   * @param parent The parent.
+   * @param parent      The parent.
    * @return The new view.
    */
   @Override
-  public @NonNull View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
+  public @NonNull
+  View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
     View v = convertView;
     ViewHolder holder;
     if (v == null) {
@@ -130,13 +139,13 @@ public class TabFragmentScanListAdapter extends ArrayAdapter<ScanResult> {
       holder.tvRssi = v.findViewById(R.id.tvRssi);
       v.setTag(holder);
     } else {
-      holder = (ViewHolder)v.getTag();
+      holder = (ViewHolder) v.getTag();
     }
     final ScanResult o = getItem(position);
     if (o != null) {
       BluetoothDevice bd = o.getDevice();
       String name = bd.getName();
-      if(name == null || name.trim().isEmpty())
+      if (name == null || name.trim().isEmpty())
         name = mContext.getString(R.string.unknown);
       else
         name = bd.getName().trim();

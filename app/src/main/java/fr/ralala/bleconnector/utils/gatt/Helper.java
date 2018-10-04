@@ -14,13 +14,16 @@ public class Helper {
   static int toU8(byte b) {
     return b & 0xFF;
   }
-  static int toU16(byte [] b) {
+
+  static int toU16(byte[] b) {
     return (toU8(b[0]) | toU8(b[1]) << 8);
   }
+
   static int toU16(byte b1, byte b2) {
-    return toU16(new byte[] { b1, b2 });
+    return toU16(new byte[]{b1, b2});
   }
-  static int toU32(byte [] b) {
+
+  static int toU32(byte[] b) {
     switch (b.length) {
       case 1:
         return toU8(b[0]);
@@ -34,8 +37,10 @@ public class Helper {
         return 0;
     }
   }
+
   /**
    * Converts the input byte array to string.
+   *
    * @param bytes Bytes array.
    * @return int
    */
@@ -48,40 +53,43 @@ public class Helper {
 
   /**
    * Converts the input byte array to string hex.
-   * @param bytes Bytes array.
+   *
+   * @param bytes  Bytes array.
    * @param revert Revert the output.
    * @return String hex (eg: 0x00 0x01)
    */
   private static String bytesToHex(byte[] bytes, boolean revert) {
     StringBuilder sb = new StringBuilder();
-    if(!revert)
+    if (!revert)
       for (byte b : bytes)
         sb.append(String.format(Locale.US, "0x%02x ", toU8(b)));
     else
-      for(int i = bytes.length - 1; i >= 0; i--)
+      for (int i = bytes.length - 1; i >= 0; i--)
         sb.append(String.format(Locale.US, "0x%02x ", toU8(bytes[i])));
     return sb.toString();
   }
 
   /**
    * Test if the array contains anything other than zeros.
+   *
    * @param bytes Bytes array.
    * @return boolean
    */
-  private static boolean isNonZeroArray(byte [] bytes) {
-    for(byte b : bytes)
-      if(b != 0)
+  private static boolean isNonZeroArray(byte[] bytes) {
+    for (byte b : bytes)
+      if (b != 0)
         return true;
     return false;
   }
 
   /**
    * Decodes the input array as string and hex values.
+   *
    * @param bytes Bytes array.
    * @return String\nHex
    */
-  static String decodeStringAndHex(byte [] bytes) {
-    if(isNonZeroArray(bytes))
+  static String decodeStringAndHex(byte[] bytes) {
+    if (isNonZeroArray(bytes))
       return bytesToHex(bytes, false) + "\n" + bytesToString(bytes);
     else
       return "0x00";
@@ -89,12 +97,13 @@ public class Helper {
 
   /**
    * Decodes the input array as hex value.
-   * @param bytes Bytes array.
+   *
+   * @param bytes  Bytes array.
    * @param revert Revert the output.
    * @return nHex
    */
-  static String decodeHex(byte [] bytes, boolean revert) {
-    if(isNonZeroArray(bytes))
+  static String decodeHex(byte[] bytes, boolean revert) {
+    if (isNonZeroArray(bytes))
       return bytesToHex(bytes, revert);
     else
       return "0x00";

@@ -54,7 +54,7 @@ public class CurrentTimeService extends GenericService {
     @Override
     public void onReceive(Context context, Intent intent) {
       byte adjustReason;
-      if(intent.getAction() == null) return;
+      if (intent.getAction() == null) return;
       switch (intent.getAction()) {
         case Intent.ACTION_TIME_CHANGED:
           adjustReason = TimeData.ADJUST_MANUAL;
@@ -75,6 +75,7 @@ public class CurrentTimeService extends GenericService {
 
   /**
    * Returns the BroadcastReceiver to use with [un]registerBroadcast methods.
+   *
    * @return The BroadcastReceiver or null if no BroadcastReceiver should be used.
    */
   protected BroadcastReceiver getBroadcastReceiver() {
@@ -83,6 +84,7 @@ public class CurrentTimeService extends GenericService {
 
   /**
    * Returns the BroadcastReceiver to use with the BroadcastReceiver.
+   *
    * @return The IntentFilter or null if no BroadcastReceiver should be used.
    */
   protected IntentFilter getIntentFilter() {
@@ -96,6 +98,7 @@ public class CurrentTimeService extends GenericService {
 
   /**
    * Returns the current service.
+   *
    * @return BluetoothGattService
    */
   protected BluetoothGattService getBluetoothGattService() {
@@ -111,7 +114,7 @@ public class CurrentTimeService extends GenericService {
       Log.i(getClass().getSimpleName(), "No subscribers registered timestamp: " + timestamp + ", adjustReason: " + adjustReason);
       return;
     }
-    if(mRegistered) {
+    if (mRegistered) {
       Calendar c = Calendar.getInstance();
       c.setTimeInMillis(timestamp);
       byte[] exactTime = TimeData.exactTime256WithUpdateReason(c, adjustReason);
@@ -128,8 +131,9 @@ public class CurrentTimeService extends GenericService {
 
   /**
    * Called by the method onCharacteristicReadRequest.
-   * @param device The remote device that has requested the read operation.
-   * @param requestId The Id of the request.
+   *
+   * @param device         The remote device that has requested the read operation.
+   * @param requestId      The Id of the request.
    * @param characteristic Characteristic to be read.
    * @return true if processed.
    */

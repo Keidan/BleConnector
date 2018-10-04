@@ -35,6 +35,7 @@ public class UIHelper {
 
   /**
    * Generates random color (light).
+   *
    * @return The generated color.
    */
   public static int generateRandomColor() {
@@ -47,16 +48,17 @@ public class UIHelper {
 
   /**
    * Displays a circular progress dialog.
+   *
    * @param context The Android context.
-   * @param cancel The cancel event callback (if null the dialog is not cancelable).
+   * @param cancel  The cancel event callback (if null the dialog is not cancelable).
    * @return AlertDialog
    */
-  public static AlertDialog showCircularProgressDialog(Context context,DialogInterface.OnCancelListener cancel) {
+  public static AlertDialog showCircularProgressDialog(Context context, DialogInterface.OnCancelListener cancel) {
     LayoutInflater layoutInflater = LayoutInflater.from(context);
     final ViewGroup nullParent = null;
     View view = layoutInflater.inflate(R.layout.circular_progress, nullParent);
     AlertDialog progress = new AlertDialog.Builder(context).create();
-    if(cancel != null) {
+    if (cancel != null) {
       progress.setOnCancelListener(cancel);
       progress.setCancelable(true);
     } else
@@ -67,15 +69,16 @@ public class UIHelper {
 
   /**
    * Shake a view on error.
-   * @param owner The owner view.
+   *
+   * @param owner   The owner view.
    * @param errText The error text.
    */
   public static void shakeError(TextView owner, String errText) {
     TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
     shake.setDuration(500);
     shake.setInterpolator(new CycleInterpolator(5));
-    if(owner != null) {
-      if(errText != null)
+    if (owner != null) {
+      if (errText != null)
         owner.setError(errText);
       owner.clearAnimation();
       owner.startAnimation(shake);
@@ -138,13 +141,14 @@ public class UIHelper {
 
   /**
    * Test if a specific service is in running state.
-   * @param context The main context.
+   *
+   * @param context      The main context.
    * @param serviceClass The service class
    * @return boolean
    */
   public static boolean isServiceRunning(final Context context, final Class<?> serviceClass) {
     final ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-    if(manager != null) {
+    if (manager != null) {
       for (final ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
         if (serviceClass.getName().equals(service.service.getClassName())) {
           return true;

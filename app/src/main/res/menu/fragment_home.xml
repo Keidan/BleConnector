@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_scan"
-        android:orderInCategory="100"
-        android:title="@string/start_scan"
-        android:visible="false"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_disconnect"
-        android:orderInCategory="100"
-        android:title="@null"
-        android:icon="@drawable/ic_bluetooth_disabled_white"
-        android:visible="false"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_read_all"
-        android:orderInCategory="100"
-        android:title="@string/read_all"
-        android:visible="false"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/expand_collapse_all"
-        android:orderInCategory="100"
-        android:title="@string/expand_all"
-        android:visible="false"
-        app:showAsAction="never"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+    android:id="@+id/action_scan"
+    android:orderInCategory="100"
+    android:title="@string/start_scan"
+    android:visible="false"
+    app:showAsAction="always" />
+  <item
+    android:id="@+id/action_disconnect"
+    android:icon="@drawable/ic_bluetooth_disabled_white"
+    android:orderInCategory="100"
+    android:title="@null"
+    android:visible="false"
+    app:showAsAction="always" />
+  <item
+    android:id="@+id/action_read_all"
+    android:orderInCategory="100"
+    android:title="@string/read_all"
+    android:visible="false"
+    app:showAsAction="never" />
+  <item
+    android:id="@+id/expand_collapse_all"
+    android:orderInCategory="100"
+    android:title="@string/expand_all"
+    android:visible="false"
+    app:showAsAction="never" />
 </menu>

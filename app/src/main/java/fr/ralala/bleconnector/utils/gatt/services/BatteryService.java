@@ -51,7 +51,7 @@ public class BatteryService extends GenericService {
     @Override
     public void onReceive(Context context, Intent intent) {
       int percent;
-      if(intent.getAction() == null) {
+      if (intent.getAction() == null) {
         Log.e(getClass().getSimpleName(), "Battery receiver NULL action");
         return;
       }
@@ -63,7 +63,7 @@ public class BatteryService extends GenericService {
           Log.e(getClass().getSimpleName(), "Battery receiver unsupported action: '" + intent.getAction() + "'");
           return;
       }
-      if(mPrevPercent != percent) {
+      if (mPrevPercent != percent) {
         mPrevPercent = percent;
         notifyRegisteredDevices(percent);
       }
@@ -72,6 +72,7 @@ public class BatteryService extends GenericService {
 
   /**
    * Returns the BroadcastReceiver to use with [un]registerBroadcast methods.
+   *
    * @return The BroadcastReceiver or null if no BroadcastReceiver should be used.
    */
   protected BroadcastReceiver getBroadcastReceiver() {
@@ -80,6 +81,7 @@ public class BatteryService extends GenericService {
 
   /**
    * Returns the BroadcastReceiver to use with the BroadcastReceiver.
+   *
    * @return The IntentFilter or null if no BroadcastReceiver should be used.
    */
   protected IntentFilter getIntentFilter() {
@@ -88,6 +90,7 @@ public class BatteryService extends GenericService {
 
   /**
    * Returns the current service.
+   *
    * @return BluetoothGattService
    */
   protected BluetoothGattService getBluetoothGattService() {
@@ -103,7 +106,7 @@ public class BatteryService extends GenericService {
       Log.i(getClass().getSimpleName(), "No subscribers registered newBatteryLevel: " + newBatteryLevelPercent + "%");
       return;
     }
-    if(mRegistered) {
+    if (mRegistered) {
       Log.i(getClass().getSimpleName(), "Sending battery update to " + mDevices.size() + " subscribers");
       for (BluetoothDevice device : mDevices) {
         BluetoothGattCharacteristic characteristic = mGattServer
@@ -118,8 +121,9 @@ public class BatteryService extends GenericService {
 
   /**
    * Called by the method onCharacteristicReadRequest.
-   * @param device The remote device that has requested the read operation.
-   * @param requestId The Id of the request.
+   *
+   * @param device         The remote device that has requested the read operation.
+   * @param requestId      The Id of the request.
    * @param characteristic Characteristic to be read.
    * @return true if processed.
    */

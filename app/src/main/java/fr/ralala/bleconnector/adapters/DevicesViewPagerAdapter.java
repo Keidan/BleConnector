@@ -31,13 +31,16 @@ public class DevicesViewPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Returns all fragments.
+   *
    * @return List<GenericTabFragment>
    */
   public List<GenericTabFragment> getFragments() {
     return mFragmentList;
   }
+
   /**
    * Returns all titles.
+   *
    * @return List<String>
    */
   public List<String> getTitles() {
@@ -46,6 +49,7 @@ public class DevicesViewPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Return the Fragment associated with a specified position.
+   *
    * @param position The specified position.
    * @return GenericTabFragment
    */
@@ -56,6 +60,7 @@ public class DevicesViewPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Return the number of views available.
+   *
    * @return int
    */
   @Override
@@ -65,23 +70,25 @@ public class DevicesViewPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Adds a fragment.
+   *
    * @param fragment The fragment to add.
-   * @param title The fragment title.
+   * @param title    The fragment title.
    */
   public void addFragment(GenericTabFragment fragment, String title) {
     mFragmentList.add(fragment);
     mFragmentTitleList.add(title);
     fragment.setDevicesFragment(mDevices);
-    fragment.setActivity((MainActivity)mDevices.getActivity());
+    fragment.setActivity((MainActivity) mDevices.getActivity());
     notifyDataSetChanged();
   }
 
   /**
    * Removes a specified fragment.
+   *
    * @param index The fragment index.
    */
   public void removeFragment(int index) {
-    if(getCount() > index) {
+    if (getCount() > index) {
       mFragmentList.remove(index);
       mFragmentTitleList.remove(index);
       notifyDataSetChanged();

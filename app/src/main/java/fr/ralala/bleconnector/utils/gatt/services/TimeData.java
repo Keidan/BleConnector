@@ -14,14 +14,15 @@ import java.util.Calendar;
  * <p>
  *******************************************************************************/
 public class TimeData {
-  private TimeData() {}
+  private TimeData() {
+  }
 
   // Adjustment Flags
-  public static final byte ADJUST_NONE     = 0x0;
-  public static final byte ADJUST_MANUAL   = 0x1;
+  public static final byte ADJUST_NONE = 0x0;
+  public static final byte ADJUST_MANUAL = 0x1;
   public static final byte ADJUST_EXTERNAL = 0x2;
   public static final byte ADJUST_TIMEZONE = 0x4;
-  public static final byte ADJUST_DST      = 0x8;
+  public static final byte ADJUST_DST = 0x8;
 
   public static byte[] exactTime256WithUpdateReason(Calendar time, byte updateReason) {
     // See https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.current_time.xml
@@ -40,7 +41,7 @@ public class TimeData {
     }
 
     // 256ths of a second
-    int fractionsOfSecond = (int)((time).get(Calendar.MILLISECOND) * 0.255F);
+    int fractionsOfSecond = (int) ((time).get(Calendar.MILLISECOND) * 0.255F);
 
     return ByteBuffer.allocate(10)
         .order(ByteOrder.LITTLE_ENDIAN)

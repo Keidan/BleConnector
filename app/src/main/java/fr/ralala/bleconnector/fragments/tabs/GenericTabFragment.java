@@ -8,13 +8,14 @@ import fr.ralala.bleconnector.MainActivity;
 import fr.ralala.bleconnector.fragments.DevicesFragment;
 
 /**
- *******************************************************************************
+ * ******************************************************************************
  * <p><b>Project BleConnector</b><br/>
  * Generic fragment for the tab component.
  * </p>
- * @author Keidan
  *
- *******************************************************************************
+ * @author Keidan
+ * <p>
+ * ******************************************************************************
  */
 public abstract class GenericTabFragment extends Fragment {
   protected DevicesFragment mDevicesFragment;
@@ -26,6 +27,7 @@ public abstract class GenericTabFragment extends Fragment {
 
   /**
    * Called when a menu is clicked.
+   *
    * @param mi The menu.
    * @return true if consumed.
    */
@@ -33,6 +35,7 @@ public abstract class GenericTabFragment extends Fragment {
 
   /**
    * Sets the reference to the devices fragment.
+   *
    * @param devicesFragment DevicesFragment
    */
   public void setDevicesFragment(DevicesFragment devicesFragment) {
@@ -41,6 +44,7 @@ public abstract class GenericTabFragment extends Fragment {
 
   /**
    * Returns true if the fragment is locked and a switch can't be processed.
+   *
    * @return boolean
    */
   public abstract boolean isLocked();

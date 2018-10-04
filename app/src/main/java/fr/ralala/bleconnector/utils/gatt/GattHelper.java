@@ -44,7 +44,7 @@ public class GattHelper {
   private static final String JSON_FILE_EXTENSION = ".json";
   private static final SparseArray<String> mAppearances = new SparseArray<>();
   private static final HashMap<String, String> mCharacteristics = new HashMap<>();
-  private static final HashMap<String, String> mServices= new HashMap<>();
+  private static final HashMap<String, String> mServices = new HashMap<>();
 
   public GattHelper loadFromAssets() {
     mCharacteristics.clear();
@@ -57,14 +57,15 @@ public class GattHelper {
 
   /**
    * Converts the byte data to a readable string.
-   * @param uuid Associated uuid.
+   *
+   * @param uuid  Associated uuid.
    * @param bytes bytes to convert.
    * @return Readable string.
    */
-  public String convert(String uuid, byte [] bytes) {
+  public String convert(String uuid, byte[] bytes) {
     String data = "";
     String file = mCharacteristics.get(uuid.toLowerCase());
-    if(file != null) {
+    if (file != null) {
       InputStream is = null;
       try {
         Context c = BleConnectorApplication.getInstance();
@@ -95,12 +96,12 @@ public class GattHelper {
             int n = toU16(bytes[0], bytes[1]);
             String ap = mAppearances.get(n);
             data = ap != null ? ap : c.getString(R.string.ble_appearance_unsupported);
-            data += "("+n+")";
+            data += "(" + n + ")";
             break;
           case "bits": {
-            if(object.has("bits")) {
+            if (object.has("bits")) {
               JSONArray array = object.getJSONArray("bits");
-              if(array != null) {
+              if (array != null) {
                 StringBuilder sbData = new StringBuilder();
                 boolean usb_PnP_found = false;
                 for (int i = 0; i < array.length(); i++) {
@@ -116,7 +117,7 @@ public class GattHelper {
                     case "enum": {
                       byte bs[] = copyBytes(bytes, length, start);
                       String s = getEnumJSON(o, bs);
-                      if(s.equals("USB") && uuid.equals("00002a50-0000-1000-8000-00805f9b34fb"))
+                      if (s.equals("USB") && uuid.equals("00002a50-0000-1000-8000-00805f9b34fb"))
                         usb_PnP_found = true;
                       sbData.append(s);
                       break;
@@ -128,7 +129,7 @@ public class GattHelper {
                     }
                     case "u16": {
                       byte bs[] = copyBytes(bytes, length, start);
-                      if(usb_PnP_found && start == 1 && length == 2) {
+                      if (usb_PnP_found && start == 1 && length == 2) {
                         usb_PnP_found = false;
                         String str = UsbVendorName.VALUES.get(toU16(bs[0], bs[1]));
                         sbData.append((str == null ? c.getString(R.string.unknown) : str));
@@ -144,7 +145,7 @@ public class GattHelper {
                     }
                     case "u16_time": {
                       byte bs[] = copyBytes(bytes, length, start);
-                      int u16 = (int)((direction.equals("normal") ?
+                      int u16 = (int) ((direction.equals("normal") ?
                           toU16(bs[0], bs[1]) : toU16(bs[1], bs[0])) * 1.25);
                       sbData.append(String.format(Locale.US, "%02d", u16)).append(unit);
                       break;
@@ -155,7 +156,7 @@ public class GattHelper {
                       break;
                     }
                   }
-                  if(i < array.length() - 1)
+                  if (i < array.length() - 1)
                     sbData.append("\n");
                 }
                 data = sbData.toString();
@@ -173,7 +174,7 @@ public class GattHelper {
         Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
       } finally {
         try {
-          if(is != null)
+          if (is != null)
             is.close();
         } catch (IOException ie) {
           Log.e(getClass().getSimpleName(), "IOException: " + ie.getMessage(), ie);
@@ -186,16 +187,17 @@ public class GattHelper {
 
   /**
    * Lookups uuid to name.
-   * @param uuid UUID to search.
+   *
+   * @param uuid        UUID to search.
    * @param defaultName Default name to use if not found.
-   * @param isService True if the UUID match with a service UUID.
+   * @param isService   True if the UUID match with a service UUID.
    * @return The name of the default name.
    */
   public String lookup(String uuid, String defaultName, boolean isService) {
     final String lc_uuid = uuid.toLowerCase();
     String file = isService ? mServices.get(lc_uuid) : mCharacteristics.get(lc_uuid);
     String name = null;
-    if(file != null) {
+    if (file != null) {
       InputStream is = null;
       try {
         is = BleConnectorApplication.getInstance().getAssets().open(file);
@@ -205,7 +207,7 @@ public class GattHelper {
         Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
       } finally {
         try {
-          if(is != null)
+          if (is != null)
             is.close();
         } catch (IOException ie) {
           Log.e(getClass().getSimpleName(), "IOException: " + ie.getMessage(), ie);
@@ -216,9 +218,9 @@ public class GattHelper {
   }
 
   public static String fixUUID(String uuid) {
-    if(uuid.startsWith("0000") && uuid.endsWith("-0000-1000-8000-00805f9b34fb")) {
+    if (uuid.startsWith("0000") && uuid.endsWith("-0000-1000-8000-00805f9b34fb")) {
       uuid = uuid.substring(0, uuid.indexOf('-'));
-      if(uuid.startsWith("0000"))
+      if (uuid.startsWith("0000"))
         uuid = uuid.substring(4);
       uuid = "0x" + uuid;
     }
@@ -260,7 +262,7 @@ public class GattHelper {
       Log.e("Gatt", msg, e);
       Toast.makeText(BleConnectorApplication.getInstance(), msg, Toast.LENGTH_SHORT).show();
     } finally {
-      if(in_s != null)
+      if (in_s != null)
         try {
           in_s.close();
         } catch (Exception e) {
@@ -272,22 +274,23 @@ public class GattHelper {
 
   /**
    * List JSON files from assets folder (or sub folder)
-   * @param path The root path.
+   *
+   * @param path      The root path.
    * @param listFiles The output list [uuid, file_path]
    * @return false on error.
    */
   private boolean listFilesJSON(String path, HashMap<String, String> listFiles) {
     try {
-      String [] list = BleConnectorApplication.getInstance().getAssets().list(path);
+      String[] list = BleConnectorApplication.getInstance().getAssets().list(path);
       if (list.length > 0) {
         // This is a folder
         for (String file : list) {
           if (!listFilesJSON(path + "/" + file, listFiles))
             return false;
           else {
-            if(file.endsWith(JSON_FILE_EXTENSION)) {
+            if (file.endsWith(JSON_FILE_EXTENSION)) {
               String uuid = file.substring(0, file.length() - JSON_FILE_EXTENSION.length()).toLowerCase();
-              if(Pattern.matches("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", uuid)) {
+              if (Pattern.matches("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}", uuid)) {
                 listFiles.put(uuid, path + "/" + file);
               } else
                 Log.e(getClass().getSimpleName(), "listFilesJSON: Invalid json UUID name: '" + file + "'");
@@ -311,12 +314,13 @@ public class GattHelper {
 
   /**
    * Decodes the enum format.
+   *
    * @param object Current JSON object.
-   * @param bytes Input bytes (from BLE).
+   * @param bytes  Input bytes (from BLE).
    * @return The enum in string.
    * @throws Exception If an error occurs.
    */
-  private String getEnumJSON(JSONObject object, byte [] bytes) throws Exception {
+  private String getEnumJSON(JSONObject object, byte[] bytes) throws Exception {
     String data = "";
     String defval = object.has("defval") ? object.getString("defval") : "ERROR";
     JSONArray array = object.has("enum") ? object.getJSONArray("enum") : null;
@@ -336,7 +340,7 @@ public class GattHelper {
           break;
         }
       }
-      if(data.isEmpty())
+      if (data.isEmpty())
         data = defval;
     } else
       data = decodeStringAndHex(bytes);
@@ -345,16 +349,17 @@ public class GattHelper {
 
   /**
    * Decodes the hex format.
+   *
    * @param object Current JSON object.
-   * @param bytes Input bytes (from BLE).
+   * @param bytes  Input bytes (from BLE).
    * @return The hex in string.
    * @throws Exception If an error occurs.
    */
-  private String getHexJSON(JSONObject object, byte [] bytes) throws Exception {
+  private String getHexJSON(JSONObject object, byte[] bytes) throws Exception {
     String data;
     String direction = object.has("direction") ? object.getString("direction") : "normal";
     int split = object.has("split") ? object.getInt("split") : 0;
-    if(split == 0) {
+    if (split == 0) {
       data = decodeHex(bytes, !direction.equals("normal"));
     } else {
       data = decodeHex(bytes, !direction.equals("normal")).replaceAll("0x", "");
@@ -364,14 +369,15 @@ public class GattHelper {
 
   /**
    * Copy bytes from one array to another.
-   * @param bytes Input array.
+   *
+   * @param bytes  Input array.
    * @param length Number of bytes to copy.
-   * @param start Start position.
+   * @param start  Start position.
    * @return New array.
    */
-  private byte[] copyBytes(byte [] bytes, int length, int start) {
+  private byte[] copyBytes(byte[] bytes, int length, int start) {
     byte bs[] = new byte[length];
-    for(int k = 0, j = start; j < start + length; k++, j++)
+    for (int k = 0, j = start; j < start + length; k++, j++)
       bs[k] = bytes[j];
     return bs;
   }

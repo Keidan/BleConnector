@@ -31,7 +31,7 @@ import fr.ralala.bleconnector.utils.gatt.services.GenericService;
  * @author Keidan
  * <p>
  *******************************************************************************/
-public class GattServerService extends Service{
+public class GattServerService extends Service {
   private static final String EXIT_ACTION = "actionExit";
   private static final int NOTIFICATION_ID = 1001;
   private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
@@ -53,7 +53,7 @@ public class GattServerService extends Service{
   }
 
   /**
-     * Called by the system to notify a Service that it is no longer used and is being removed.
+   * Called by the system to notify a Service that it is no longer used and is being removed.
    */
   @Override
   public void onDestroy() {
@@ -63,6 +63,7 @@ public class GattServerService extends Service{
 
   /**
    * Called when on service bind.
+   *
    * @param intent Unused.
    * @return null
    */
@@ -73,8 +74,9 @@ public class GattServerService extends Service{
 
   /**
    * Called by the system every time a client explicitly starts the service
-   * @param intent The Intent supplied to startService(Intent), as given.
-   * @param flags Additional data about this start request.
+   *
+   * @param intent  The Intent supplied to startService(Intent), as given.
+   * @param flags   Additional data about this start request.
    * @param startId A unique integer representing this specific request to start.
    * @return int
    */
@@ -82,7 +84,7 @@ public class GattServerService extends Service{
   public int onStartCommand(final Intent intent, final int flags,
                             final int startId) {
     /* Kill from notification */
-    if(intent != null && intent.getAction() != null && intent.getAction().equals(EXIT_ACTION)) {
+    if (intent != null && intent.getAction() != null && intent.getAction().equals(EXIT_ACTION)) {
       // If you want to cancel the notification:
       NotificationManagerCompat.from(this).cancel(GattServerService.NOTIFICATION_ID);
       stopService(GattServerService.getIntent());
@@ -102,7 +104,7 @@ public class GattServerService extends Service{
    */
   private void startServer() {
     BleConnectorApplication app = BleConnectorApplication.getInstance();
-    if(app.isUseServer()) {
+    if (app.isUseServer()) {
       BluetoothManager manager = (BluetoothManager) getSystemService(Activity.BLUETOOTH_SERVICE);
       if (manager != null) {
         mBluetoothLeAdvertiser = manager.getAdapter().getBluetoothLeAdvertiser();
@@ -114,7 +116,7 @@ public class GattServerService extends Service{
               .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
               .build();
 
-        /* Adds all services */
+          /* Adds all services */
           AdvertiseData data = new AdvertiseData.Builder()
               .setIncludeDeviceName(true)
               .setIncludeTxPowerLevel(true)
@@ -135,7 +137,7 @@ public class GattServerService extends Service{
             mGattServerCallback.getService(GattServerCallback.CURRENT_TIME_SERVICE).registerService(this);
           if (app.isUseBatteryService())
             mGattServerCallback.getService(GattServerCallback.BATTERY_SERVICE).registerService(this);
-          for(GenericService service : mGattServerCallback.getServices())
+          for (GenericService service : mGattServerCallback.getServices())
             service.registerBroadcast(this);
         }
       } else
@@ -148,20 +150,21 @@ public class GattServerService extends Service{
    * Stops the BLE server.
    */
   private void stopServer() {
-    if(mGattServerCallback != null) {
-      for(GenericService service : mGattServerCallback.getServices())
+    if (mGattServerCallback != null) {
+      for (GenericService service : mGattServerCallback.getServices())
         service.unregisterBroadcast(this);
     }
     if (mBluetoothGattServer != null) {
       mBluetoothGattServer.close();
       mBluetoothGattServer = null;
     }
-    if(mBluetoothLeAdvertiser != null)
+    if (mBluetoothLeAdvertiser != null)
       mBluetoothLeAdvertiser.stopAdvertising(mLeAdvertiseCallback);
   }
 
   /**
    * Returns the notification object.
+   *
    * @return Notification
    */
   public Notification getNotification() {
@@ -170,7 +173,7 @@ public class GattServerService extends Service{
     PendingIntent contentPendingIntent = PendingIntent.getActivity(this, 0, contentIntent, 0);
     Intent intentAction = new Intent(this, GattServerService.class);
     intentAction.setAction(EXIT_ACTION);
-    PendingIntent pIntent = PendingIntent.getService(this,0, intentAction, PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent pIntent = PendingIntent.getService(this, 0, intentAction, PendingIntent.FLAG_UPDATE_CURRENT);
     NotificationCompat.Builder foregroundNotification = new NotificationCompat.Builder(this, "channel_id0");
     foregroundNotification.setOngoing(true);
     NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.ic_exit_black, getString(R.string.service_notification_exit), pIntent).build();

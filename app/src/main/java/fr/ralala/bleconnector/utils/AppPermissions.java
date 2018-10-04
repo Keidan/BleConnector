@@ -24,7 +24,7 @@ public class AppPermissions {
   /**
    * Callback for the result from requesting permissions.
    *
-   * @param a  The owner activity.
+   * @param a            The owner activity.
    * @param permissions  The requested permissions. Never null.
    * @param grantResults The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
    * @return False on error, true else.

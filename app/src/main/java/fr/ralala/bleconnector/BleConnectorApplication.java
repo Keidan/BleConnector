@@ -18,14 +18,14 @@ public class BleConnectorApplication extends Application {
   private static final String KEY_SERVER = "kStartServer";
   private static final String KEY_CURRENT_TIME_SERVICE = "kCurrentTimeService";
   private static final String KEY_BATTERY_SERVICE = "kBatteryService";
-  public static final boolean DEFAULT_SERVER  = true;
-  public static final boolean DEFAULT_CURRENT_TIME_SERVICE  = true;
+  public static final boolean DEFAULT_SERVER = true;
+  public static final boolean DEFAULT_CURRENT_TIME_SERVICE = true;
   public static final boolean DEFAULT_BATTERY_SERVICE = true;
   private GattHelper mGattHelper;
   private SharedPreferences mSharedPreferences;
   private static BleConnectorApplication singleton;
 
-  public static BleConnectorApplication getInstance(){
+  public static BleConnectorApplication getInstance() {
     return singleton;
   }
 
@@ -39,6 +39,7 @@ public class BleConnectorApplication extends Application {
 
   /**
    * Returns the instance to the GATT.
+   *
    * @return Gatt
    */
   public GattHelper getGattHelper() {
@@ -47,20 +48,25 @@ public class BleConnectorApplication extends Application {
 
   /**
    * Returns if the service server is to be used.
+   *
    * @return boolean
    */
   public boolean isUseServer() {
     return mSharedPreferences.getBoolean(KEY_SERVER, DEFAULT_SERVER);
   }
+
   /**
    * Returns if the current time service is to be used.
+   *
    * @return boolean
    */
   public boolean isUseCurrentTimeService() {
     return mSharedPreferences.getBoolean(KEY_CURRENT_TIME_SERVICE, DEFAULT_CURRENT_TIME_SERVICE);
   }
+
   /**
    * Returns if the battery service is to be used.
+   *
    * @return boolean
    */
   public boolean isUseBatteryService() {
@@ -70,6 +76,7 @@ public class BleConnectorApplication extends Application {
 
   /**
    * Sets the use service server state.
+   *
    * @param b The new state.
    */
   public void setUseServer(boolean b) {
@@ -80,6 +87,7 @@ public class BleConnectorApplication extends Application {
 
   /**
    * Sets the use current time service state.
+   *
    * @param b The new state.
    */
   public void setUseCurrentTimeService(boolean b) {
@@ -90,6 +98,7 @@ public class BleConnectorApplication extends Application {
 
   /**
    * Sets the use battery service state.
+   *
    * @param b The new state.
    */
   public void setUseBatteryService(boolean b) {

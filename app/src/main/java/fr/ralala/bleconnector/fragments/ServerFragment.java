@@ -13,13 +13,14 @@ import fr.ralala.bleconnector.GattServerService;
 import fr.ralala.bleconnector.R;
 
 /**
- *******************************************************************************
+ * ******************************************************************************
  * <p><b>Project BleConnector</b><br/>
  * Server fragment
  * </p>
- * @author Keidan
  *
- *******************************************************************************
+ * @author Keidan
+ * <p>
+ * ******************************************************************************
  */
 public class ServerFragment extends Fragment implements View.OnClickListener {
   private Switch mSwStartServer;

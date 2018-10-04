@@ -1533,7 +1533,7 @@ public class UsbVendorName {
     VALUES.put(0x6666, "Decision Computer International Co.");
     VALUES.put(0x6945, "ASMedia Technology Inc.");
     VALUES.put(0x7604, "O.N. Electric Co. Ltd.");
-    VALUES.put(0x7d1,  "D-Link Corporation");
+    VALUES.put(0x7d1, "D-Link Corporation");
     VALUES.put(0x8080, "Xirlink, Inc");
     VALUES.put(0x8086, "Intel Corporation");
     VALUES.put(0x8087, "Intel");

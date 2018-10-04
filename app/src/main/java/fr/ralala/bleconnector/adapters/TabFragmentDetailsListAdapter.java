@@ -56,7 +56,8 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
   public interface OnImageClick {
     /**
      * Called when the user clicks on an image.
-     * @param download True if the download image is clicked, false for the upload image.
+     *
+     * @param download      True if the download image is clicked, false for the upload image.
      * @param groupPosition The position of the group that the child resides in.
      * @param childPosition The position of the child with respect to other children in the group.
      */
@@ -65,6 +66,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Creates the array adapter.
+   *
    * @param context The Android context.
    */
   public TabFragmentDetailsListAdapter(final Context context, ExpandableListView ExpandableListView, List<BluetoothGattService> listDataHeader,
@@ -87,6 +89,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Adds a new service.
+   *
    * @param service The service to add.
    */
   public void add(BluetoothGattService service) {
@@ -95,17 +98,18 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
   }
 
   public void expandAll() {
-    for(int i = getGroupCount() - 1; i >= 0; i--)
+    for (int i = getGroupCount() - 1; i >= 0; i--)
       mExpandableListView.expandGroup(i);
   }
 
   public void collapseAll() {
-    for(int i = getGroupCount() - 1; i >= 0; i--)
+    for (int i = getGroupCount() - 1; i >= 0; i--)
       mExpandableListView.collapseGroup(i);
   }
 
   /**
    * Gets the data associated with the given child within the given group.
+   *
    * @param groupPosition The position of the group that the child resides in.
    * @param childPosition The position of the child with respect to other children in the group.
    * @return The data of the child.
@@ -118,6 +122,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets the ID for the given child within the given group.
+   *
    * @param groupPosition The position of the group that contains the child.
    * @param childPosition The position of the child within the group for which the ID is wanted.
    * @return The ID associated with the child.
@@ -129,18 +134,19 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets a View that displays the data for the given child within the given group.
+   *
    * @param groupPosition The position of the group that contains the child
    * @param childPosition The position of the child (for which the View is returned) within the group.
-   * @param isLastChild Whether the child is the last child within the group.
-   * @param convertView The old view to reuse, if possible.
-   * @param parent The parent that this view will eventually be attached to.
+   * @param isLastChild   Whether the child is the last child within the group.
+   * @param convertView   The old view to reuse, if possible.
+   * @param parent        The parent that this view will eventually be attached to.
    * @return The View corresponding to the child at the specified position.
    */
   @Override
   public View getChildView(int groupPosition, final int childPosition,
                            boolean isLastChild, View convertView, ViewGroup parent) {
 
-    final BluetoothGattCharacteristic child = (BluetoothGattCharacteristic)getChild(groupPosition, childPosition);
+    final BluetoothGattCharacteristic child = (BluetoothGattCharacteristic) getChild(groupPosition, childPosition);
     ViewHolderChild holder;
     if (convertView == null) {
       convertView = mInflater.inflate(R.layout.expandable_list_child_details, mNullParent);
@@ -164,31 +170,31 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
     holder.tvUUID.setText(GattHelper.fixUUID(uuid));
     String properties;
     int prop = child.getProperties();
-    if(child.getProperties() != 0) {
+    if (child.getProperties() != 0) {
       properties = "";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_BROADCAST) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_BROADCAST) != 0)
         properties += mContext.getString(R.string.property_broadcast) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_READ) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_READ) != 0)
         properties += mContext.getString(R.string.property_read) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0)
         properties += mContext.getString(R.string.property_write_no_response) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0)
         properties += mContext.getString(R.string.property_write) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0)
         properties += mContext.getString(R.string.property_notify) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0)
         properties += mContext.getString(R.string.property_indicate) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0)
         properties += mContext.getString(R.string.property_signed_write) + ",";
-      if((prop & BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS) != 0)
+      if ((prop & BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS) != 0)
         properties += mContext.getString(R.string.property_extended_props) + ",";
-      if(properties.endsWith(","))
+      if (properties.endsWith(","))
         properties = properties.substring(0, properties.length() - 1);
     } else
       properties = mContext.getString(R.string.unknown);
     holder.tvProperties.setText(properties);
     int props = child.getProperties();
-    if((props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 &&
+    if ((props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 &&
         (props & BluetoothGattCharacteristic.PROPERTY_READ) == 0) {
       holder.trData.setVisibility(View.GONE);
     } else {
@@ -196,14 +202,14 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
       byte[] bytes = child.getValue();
       holder.tvData.setText(bytes == null ? "" : BleConnectorApplication.getInstance().getGattHelper().convert(uuid, bytes));
     }
-    if((props & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ||
+    if ((props & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0 ||
         (props & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0 ||
         (props & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0)
       holder.ivUpload.setVisibility(View.VISIBLE);
     else
       holder.ivUpload.setVisibility(View.INVISIBLE);
 
-    if((props & BluetoothGattCharacteristic.PROPERTY_READ) != 0)
+    if ((props & BluetoothGattCharacteristic.PROPERTY_READ) != 0)
       holder.ivDownload.setVisibility(View.VISIBLE);
     else
       holder.ivDownload.setVisibility(View.INVISIBLE);
@@ -212,6 +218,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets the number of children in a specified group.
+   *
    * @param groupPosition The position of the group for which the children count should be returned.
    * @return The children count in the specified group
    */
@@ -223,6 +230,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets the data associated with the given group.
+   *
    * @param groupPosition The position of the group.
    * @return The data child for the specified group.
    */
@@ -233,6 +241,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets the number of groups.
+   *
    * @return The number of groups.
    */
   @Override
@@ -242,6 +251,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets the ID for the group at the given position.
+   *
    * @param groupPosition The position of the group for which the ID is wanted.
    * @return The ID associated with the group.
    */
@@ -252,10 +262,11 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Gets a View that displays the given group.
+   *
    * @param groupPosition The position of the group for which the View is returned.
-   * @param isExpanded Whether the group is expanded or collapsed.
-   * @param convertView The old view to reuse, if possible.
-   * @param parent The parent that this view will eventually be attached to.
+   * @param isExpanded    Whether the group is expanded or collapsed.
+   * @param convertView   The old view to reuse, if possible.
+   * @param parent        The parent that this view will eventually be attached to.
    * @return The View corresponding to the group at the specified position.
    */
   @Override
@@ -269,7 +280,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
       holder.tvUUID = convertView.findViewById(R.id.tvUUID);
       convertView.setTag(holder);
     } else {
-      holder = (ViewHolderHeader)convertView.getTag();
+      holder = (ViewHolderHeader) convertView.getTag();
     }
 
     String uuid = header.getUuid().toString();
@@ -280,6 +291,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Indicates whether the child and group IDs are stable across changes to the underlying data.
+   *
    * @return Whether or not the same ID always refers to the same object.
    */
   @Override
@@ -289,6 +301,7 @@ public class TabFragmentDetailsListAdapter extends BaseExpandableListAdapter {
 
   /**
    * Whether the child at the specified position is selectable.
+   *
    * @param groupPosition The position of the group that contains the child.
    * @param childPosition The position of the child within the group.
    * @return Whether the child is selectable.

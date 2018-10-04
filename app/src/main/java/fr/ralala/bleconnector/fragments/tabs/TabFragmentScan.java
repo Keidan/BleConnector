@@ -18,13 +18,14 @@ import fr.ralala.bleconnector.callbacks.LeScanCallback;
 import fr.ralala.bleconnector.utils.UIHelper;
 
 /**
- *******************************************************************************
+ * ******************************************************************************
  * <p><b>Project BleConnector</b><br/>
  * Scan fragment used in TabLayout view.
  * </p>
- * @author Keidan
  *
- *******************************************************************************
+ * @author Keidan
+ * <p>
+ * ******************************************************************************
  */
 public class TabFragmentScan extends GenericTabFragment {
   private boolean mScanning;
@@ -46,7 +47,7 @@ public class TabFragmentScan extends GenericTabFragment {
     listDevices.setAdapter(mScanListAdapter);
     listDevices.setOnItemClickListener((parent, view, position, id) -> {
       ScanResult sr = mScanListAdapter.getItem(position);
-      if(sr != null) {
+      if (sr != null) {
         stopScan(mItem);
         mActivity.progressShow();
         mActivity.connectGATT(sr);
@@ -60,7 +61,7 @@ public class TabFragmentScan extends GenericTabFragment {
   public void onResume() {
     super.onResume();
     /* Force refresh */
-    if(mScanListAdapter != null)
+    if (mScanListAdapter != null)
       mScanListAdapter.notifyDataSetChanged();
   }
 
@@ -69,7 +70,7 @@ public class TabFragmentScan extends GenericTabFragment {
    */
   @Override
   public void abortProcess() {
-    if(mScanning)
+    if (mScanning)
       stopScan(mItem);
   }
 
@@ -83,11 +84,12 @@ public class TabFragmentScan extends GenericTabFragment {
 
   /**
    * Returns true if the fragment is locked and a switch can't be processed.
+   *
    * @return boolean
    */
   @Override
   public boolean isLocked() {
-    if(mScanning) {
+    if (mScanning) {
       Toast.makeText(mActivity, R.string.scan_running, Toast.LENGTH_SHORT).show();
       return true;
     }
@@ -96,6 +98,7 @@ public class TabFragmentScan extends GenericTabFragment {
 
   /**
    * Called when a menu is clicked.
+   *
    * @param mi The menu.
    * @return true if consumed.
    */
@@ -103,13 +106,13 @@ public class TabFragmentScan extends GenericTabFragment {
     switch (mi.getItemId()) {
       case R.id.action_scan:
         mItem = mi;
-        if(mScanning) {
+        if (mScanning) {
           stopScan(mi);
         } else {
           mActivity.closeGATT();
           mScanListAdapter.clear();
           BluetoothLeScanner scanner = mActivity.getBluetoothLeScanner();
-          if(scanner == null)
+          if (scanner == null)
             UIHelper.snackInfo(mActivity, getString(R.string.ble_not_enabled));
           else {
             // Stops scanning after a pre-defined scan period.
@@ -131,8 +134,8 @@ public class TabFragmentScan extends GenericTabFragment {
    * Requests for clear UI.
    */
   @Override
-  public void requestClearUI()  {
-    if(mScanListAdapter != null) {
+  public void requestClearUI() {
+    if (mScanListAdapter != null) {
       mScanListAdapter.clear();
       mScanListAdapter.notifyDataSetChanged();
     }
@@ -142,10 +145,10 @@ public class TabFragmentScan extends GenericTabFragment {
    * Stops the BLE scan.
    */
   public void stopScan(MenuItem mi) {
-    if(mScanning) {
+    if (mScanning) {
       mScanning = false;
       mActivity.getBluetoothLeScanner().stopScan(mLeScanCallback);
-      if(mi != null)
+      if (mi != null)
         mi.setTitle(R.string.start_scan);
     }
   }

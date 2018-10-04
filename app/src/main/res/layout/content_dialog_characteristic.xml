@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="10dp"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="10dp"
+  android:stretchColumns="*">
+
+  <android.support.design.widget.TextInputLayout
+    android:id="@+id/editTextLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.design.widget.TextInputEditText
+      android:id="@+id/editText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ems="10"
+      android:hint="@string/value_hint"
+      android:imeOptions="actionDone"
+      android:inputType="textVisiblePassword">
+
+      <requestFocus />
+    </android.support.design.widget.TextInputEditText>
+  </android.support.design.widget.TextInputLayout>
+
+  <TextView
+    style="@style/InputLabel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:stretchColumns="*">
+    android:text="@string/format_hint" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/editTextLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+  <android.support.v7.widget.AppCompatSpinner
+    android:id="@+id/spFormat"
+    style="@style/Widget.AppCompat.Spinner.Underlined"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom">
 
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"
-            android:hint="@string/value_hint"
-            android:imeOptions="actionDone"
-            android:id="@+id/editText"
-            android:ems="10">
-
-            <requestFocus />
-        </android.support.design.widget.TextInputEditText>
-    </android.support.design.widget.TextInputLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/format_hint"
-        style="@style/InputLabel" />
-
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/spFormat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_gravity="bottom">
-
-    </android.support.v7.widget.AppCompatSpinner>
+  </android.support.v7.widget.AppCompatSpinner>
 </LinearLayout>

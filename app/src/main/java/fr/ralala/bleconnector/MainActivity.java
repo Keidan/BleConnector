@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Called when the activity is created.
+   *
    * @param savedInstanceState The saved instance state.
    */
   @Override
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     mRlSnackBleStatus = findViewById(R.id.rlSnackBleStatus);
-    findViewById(R.id.tvBleStatusAction).setOnClickListener((v) ->{
+    findViewById(R.id.tvBleStatusAction).setOnClickListener((v) -> {
       if (mBluetoothAdapter.isEnabled()) {
         if (mBluetoothAdapter.isDiscovering()) {
           UIHelper.snackInfo(this, getString(R.string.ble_currently_in_discovery));
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     toggle.syncState();
     mGattCallback = new GattCallback(this);
     mNavigationView = findViewById(R.id.nav_view);
-    if(mNavigationView != null) {
+    if (mNavigationView != null) {
       mNavigationView.setNavigationItemSelectedListener(this);
       mNavigationView.getMenu().getItem(0).setChecked(true);
     }
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the reference to the GattCallback.
+   *
    * @return GattCallback
    */
   public GattCallback getGattCallback() {
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the List<BluetoothGattService>
+   *
    * @return List<BluetoothGattService>
    */
   public List<BluetoothGattService> getListDataHeader() {
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the <code>HashMap<BluetoothGattService, List<BluetoothGattCharacteristic></code>
+   *
    * @return <code>HashMap<BluetoothGattService, List<BluetoothGattCharacteristic></code>
    */
   public HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> getListDataChild() {
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the List<ScanResult>
+   *
    * @return List<ScanResult>
    */
   public List<ScanResult> getScanResults() {
@@ -153,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the reference to the BluetoothGatt object.
+   *
    * @return BluetoothGatt
    */
   public BluetoothGatt getBluetoothGatt() {
@@ -161,16 +167,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Returns the reference to the BluetoothLeScanner object.
+   *
    * @return BluetoothLeScanner
    */
   public BluetoothLeScanner getBluetoothLeScanner() {
-    if(mBluetoothLeScanner == null && mBluetoothAdapter != null)
+    if (mBluetoothLeScanner == null && mBluetoothAdapter != null)
       mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
     return mBluetoothLeScanner;
   }
 
   /**
    * Connect the GATT part.
+   *
    * @param scanResult The scan result containing the remote device.
    */
   public void connectGATT(ScanResult scanResult) {
@@ -185,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @Override
   public void onResume() {
     super.onResume();
-   // mFragments.onResume();
-    if(mApp.isUseServer() && !UIHelper.isServiceRunning(mApp, GattServerService.class))
+    // mFragments.onResume();
+    if (mApp.isUseServer() && !UIHelper.isServiceRunning(mApp, GattServerService.class))
       startService(GattServerService.getIntent());
   }
 
@@ -213,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       return;
     }
     if (mLastBackPressed + BACK_TIME_DELAY > System.currentTimeMillis()) {
-      if(UIHelper.isServiceRunning(mApp, GattServerService.class))
+      if (UIHelper.isServiceRunning(mApp, GattServerService.class))
         stopService(GattServerService.getIntent());
       closeGATT();
       super.onBackPressed();
@@ -228,11 +236,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
    * Closes the GATT connection
    */
   public void closeGATT() {
-    if(mBluetoothGatt != null && mProgress != null && mProgress.isShowing())
+    if (mBluetoothGatt != null && mProgress != null && mProgress.isShowing())
       mProgress.dismiss();
-    if(mGattCallback != null)
+    if (mGattCallback != null)
       mGattCallback.abort();
-    if(mBluetoothGatt != null) {
+    if (mBluetoothGatt != null) {
       mBluetoothGatt.close();
       mBluetoothGatt = null;
     }
@@ -240,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Called when an item is selected in the navigation view.
+   *
    * @param item The selected item.
    * @return boolean
    */
@@ -251,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Displays a specific view.
+   *
    * @param viewId The view id to display.
    */
   public void displayView(int viewId) {
@@ -268,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         break;
       case R.id.nav_server:
         mFragments.setCurrentToFragment(AppFragmentsFactory.IDX_SERVER);
-        title  = getString(R.string.server);
+        title = getString(R.string.server);
         break;
       default:
         mFragments.setCurrentToFragment(-1);
@@ -288,11 +298,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       setSubTitle(title);
     }
 
-    if(mDrawer != null) mDrawer.closeDrawer(GravityCompat.START);
+    if (mDrawer != null) mDrawer.closeDrawer(GravityCompat.START);
   }
 
   /**
    * Sets the application title.
+   *
    * @param title The new title, null for default title.
    */
   public void setSubTitle(String title) {
@@ -318,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void progressShow() {
     mProgress.show();
     Window window = mProgress.getWindow();
-    if(window != null) {
+    if (window != null) {
       window.setLayout(350, 350);
       View v = window.getDecorView();
       v.setBackgroundResource(R.drawable.rounded_border);
@@ -337,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   /*-----------------------------------------*/
   /* INIT                                    */
   /*-----------------------------------------*/
+
   /**
    * Initialize the application.
    */
@@ -356,14 +368,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
   /**
    * Called when an activity you launched exits, giving you the requestCode you started it with, the resultCode it returned, and any additional data from it.
+   *
    * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
    * @param resultCode  The integer result code returned by the child activity through its setResult().
-   * @param data An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+   * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
    */
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_ENABLE_BT) {
       final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-      if(bluetoothManager == null) {
+      if (bluetoothManager == null) {
         mRlSnackBleStatus.setVisibility(View.VISIBLE);
       } else {
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -384,6 +397,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   /*-----------------------------------------*/
   /* PERMISSIONS                             */
   /*-----------------------------------------*/
+
   /**
    * Callback for the result from requesting permissions.
    *
@@ -395,12 +409,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
     switch (requestCode) {
       case AppPermissions.PERMISSIONS_REQUEST_BLUETOOTH: {
-        if(AppPermissions.onRequestPermissionsResult(this, permissions, grantResults))
+        if (AppPermissions.onRequestPermissionsResult(this, permissions, grantResults))
           initialize();
         break;
       }
     }
   }
+
   /*-----------------------------------------*/
   /* BLE STATE CHANGED                       */
   /*-----------------------------------------*/
@@ -412,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       if (action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
         final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
         if (state == BluetoothAdapter.STATE_TURNING_OFF) {
-          if(UIHelper.isServiceRunning(mApp, GattServerService.class))
+          if (UIHelper.isServiceRunning(mApp, GattServerService.class))
             stopService(GattServerService.getIntent());
           closeGATT();
           initialize();

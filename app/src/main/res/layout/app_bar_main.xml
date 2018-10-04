@@ -1,70 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/coordinatorLayout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true"
+  tools:context="fr.ralala.bleconnector.MainActivity">
+
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/appBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:theme="@style/AppTheme.AppBarOverlay">
+
+    <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="?attr/colorPrimary"
+      app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+  </android.support.design.widget.AppBarLayout>
+
+
+  <RelativeLayout
+    android:id="@+id/rlSnackBleStatus"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/appBarLayout"
+    android:background="@color/colorRedDark">
+
+    <TextView
+      android:id="@+id/tvBleStatusText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:paddingEnd="0dp"
+      android:paddingStart="5dp"
+      android:text="@string/ble_not_enabled"
+      android:textColor="@color/colorWhite"
+      android:textSize="16sp" />
+
+    <TextView
+      android:id="@+id/tvBleStatusAction"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_centerVertical="true"
+      android:paddingEnd="5dp"
+      android:paddingStart="0dp"
+      android:text="@string/enable"
+      android:textColor="@color/colorGrayLight"
+      android:textSize="16sp"
+      android:textStyle="bold"
+      tools:ignore="RelativeOverlap" />
+  </RelativeLayout>
+
+  <FrameLayout
+    android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:id="@+id/coordinatorLayout"
-    tools:context="fr.ralala.bleconnector.MainActivity">
-
-    <android.support.design.widget.AppBarLayout
-      android:id="@+id/appBarLayout"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
-
-    </android.support.design.widget.AppBarLayout>
-
-
-    <RelativeLayout android:id="@+id/rlSnackBleStatus"
-      android:layout_alignParentStart="true"
-      android:layout_below="@+id/appBarLayout"
-      android:layout_width="match_parent"
-      android:layout_height="40dp"
-      android:background="@color/colorRedDark">
-        <TextView
-          android:id="@+id/tvBleStatusText"
-          android:layout_alignParentStart="true"
-          android:layout_centerVertical="true"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:paddingEnd="0dp"
-          android:paddingStart="5dp"
-          android:textSize="16sp"
-          android:textColor="@color/colorWhite"
-          android:text="@string/ble_not_enabled"/>
-        <TextView
-          android:id="@+id/tvBleStatusAction"
-          android:layout_alignParentEnd="true"
-          android:layout_centerVertical="true"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textSize="16sp"
-          android:text="@string/enable"
-          android:textStyle="bold"
-          android:paddingEnd="5dp"
-          android:paddingStart="0dp"
-          android:textColor="@color/colorGrayLight"
-          tools:ignore="RelativeOverlap" />
-    </RelativeLayout>
-
-    <FrameLayout
-      android:layout_below="@+id/rlSnackBleStatus"
-      android:layout_centerInParent="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/content_frame"/>
+    android:layout_below="@+id/rlSnackBleStatus"
+    android:layout_centerInParent="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </RelativeLayout>

@@ -29,6 +29,7 @@ public abstract class GenericService {
 
   /**
    * Sets the registered devices.
+   *
    * @param devices The registered devices.
    */
   public void setRegisteredDevices(Set<BluetoothDevice> devices) {
@@ -37,6 +38,7 @@ public abstract class GenericService {
 
   /**
    * Sets the reference to the GATT server.
+   *
    * @param gattServer The GATT server.
    */
   public void setGattServer(BluetoothGattServer gattServer) {
@@ -45,13 +47,14 @@ public abstract class GenericService {
 
   /**
    * Registers the internal broadcast.
+   *
    * @param c The Android context.
    */
   public void registerBroadcast(Context c) {
-    if(mRegistered && !mRegisteredBroadcast) {
+    if (mRegistered && !mRegisteredBroadcast) {
       BroadcastReceiver br = getBroadcastReceiver();
       IntentFilter filter = getIntentFilter();
-      if(br != null && filter != null)
+      if (br != null && filter != null)
         c.registerReceiver(br, filter);
       mRegisteredBroadcast = true;
     }
@@ -59,12 +62,13 @@ public abstract class GenericService {
 
   /**
    * Unregisters the internal broadcast.
+   *
    * @param c The Android context.
    */
   public void unregisterBroadcast(Context c) {
-    if(mRegisteredBroadcast) {
+    if (mRegisteredBroadcast) {
       BroadcastReceiver br = getBroadcastReceiver();
-      if(br != null)
+      if (br != null)
         c.unregisterReceiver(br);
       mRegisteredBroadcast = false;
     }
@@ -72,10 +76,11 @@ public abstract class GenericService {
 
   /**
    * Registers the service.
+   *
    * @param c The Android context.
    */
   public void registerService(Context c) {
-    if(!mRegistered && mGattServer != null) {
+    if (!mRegistered && mGattServer != null) {
       mGattServer.addService(getBluetoothGattService());
       mRegistered = true;
       registerBroadcast(c);
@@ -84,10 +89,11 @@ public abstract class GenericService {
 
   /**
    * Unregisters the service.
+   *
    * @param c The Android context.
    */
   public void unregisterService(Context c) {
-    if(mRegistered && mGattServer != null) {
+    if (mRegistered && mGattServer != null) {
       mGattServer.removeService(getBluetoothGattService());
       mRegistered = false;
       unregisterBroadcast(c);
@@ -96,6 +102,7 @@ public abstract class GenericService {
 
   /**
    * Tests if the service is registered.
+   *
    * @return boolean.
    */
   public boolean isRegistered() {
@@ -104,8 +111,9 @@ public abstract class GenericService {
 
   /**
    * Called by the method onCharacteristicReadRequest.
-   * @param device The remote device that has requested the read operation.
-   * @param requestId The Id of the request.
+   *
+   * @param device         The remote device that has requested the read operation.
+   * @param requestId      The Id of the request.
    * @param characteristic Characteristic to be read.
    * @return true if processed.
    */
@@ -118,18 +126,21 @@ public abstract class GenericService {
 
   /**
    * Returns the BroadcastReceiver to use with [un]registerBroadcast methods.
+   *
    * @return The BroadcastReceiver or null if no BroadcastReceiver should be used.
    */
   protected abstract BroadcastReceiver getBroadcastReceiver();
 
   /**
    * Returns the BroadcastReceiver to use with the BroadcastReceiver.
+   *
    * @return The IntentFilter or null if no BroadcastReceiver should be used.
    */
   protected abstract IntentFilter getIntentFilter();
 
   /**
    * Returns the current service.
+   *
    * @return BluetoothGattService
    */
   protected abstract BluetoothGattService getBluetoothGattService();

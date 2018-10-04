@@ -32,15 +32,16 @@ import fr.ralala.bleconnector.callbacks.GattCallback;
 import fr.ralala.bleconnector.utils.UIHelper;
 
 /**
- *******************************************************************************
+ * ******************************************************************************
  * <p><b>Project BleConnector</b><br/>
  * Inspect fragment used in TabLayout view.
  * </p>
- * @author Keidan
  *
- *******************************************************************************
+ * @author Keidan
+ * <p>
+ * ******************************************************************************
  */
-public class TabFragmentDetails extends GenericTabFragment  implements TabFragmentDetailsListAdapter.OnImageClick {
+public class TabFragmentDetails extends GenericTabFragment implements TabFragmentDetailsListAdapter.OnImageClick {
   private TabFragmentDetailsListAdapter mTabFragmentDetailsListAdapter;
 
   private class Item {
@@ -75,8 +76,8 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
    * Requests for clear UI.
    */
   @Override
-  public void requestClearUI()  {
-    if(mTabFragmentDetailsListAdapter != null) {
+  public void requestClearUI() {
+    if (mTabFragmentDetailsListAdapter != null) {
       mTabFragmentDetailsListAdapter.clear();
       mTabFragmentDetailsListAdapter.notifyDataSetChanged();
     }
@@ -91,6 +92,7 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
 
   /**
    * Called when a menu is clicked.
+   *
    * @param mi The menu.
    * @return true if consumed.
    */
@@ -144,6 +146,7 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
 
   /**
    * Returns true if the fragment is locked and a switch can't be processed.
+   *
    * @return boolean
    */
   @Override
@@ -161,30 +164,31 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
 
   /**
    * Called when the user clicks on an image.
-   * @param download True if the download image is clicked, false for the upload image.
+   *
+   * @param download      True if the download image is clicked, false for the upload image.
    * @param groupPosition The position of the group that the child resides in.
    * @param childPosition The position of the child with respect to other children in the group.
    */
   @Override
   public void onImageClick(boolean download, int groupPosition, int childPosition) {
-    BluetoothGattCharacteristic item = (BluetoothGattCharacteristic)mTabFragmentDetailsListAdapter.getChild(groupPosition, childPosition);
-    if(item == null) return;
-    if(download) {
+    BluetoothGattCharacteristic item = (BluetoothGattCharacteristic) mTabFragmentDetailsListAdapter.getChild(groupPosition, childPosition);
+    if (item == null) return;
+    if (download) {
       mActivity.progressShow();
       mActivity.getGattCallback().readCharacteristics(Collections.singletonList(item));
     } else {
       createTextDialog(mActivity, getString(R.string.characteristic_tilte), R.layout.content_dialog_characteristic, (dialog, editText, spFormat) -> {
         String text = editText.getText().toString();
-        if(!isValid(text, editText))
+        if (!isValid(text, editText))
           return;
-        Item spItem = (Item)spFormat.getSelectedItem();
-        if(spItem != null) {
+        Item spItem = (Item) spFormat.getSelectedItem();
+        if (spItem != null) {
           int n = 0;
-          if(spItem.fmt != Integer.MIN_VALUE) {
+          if (spItem.fmt != Integer.MIN_VALUE) {
             text = text.replaceAll("0x", "");
-            if(!isValid(text, editText))
+            if (!isValid(text, editText))
               return;
-            if(spItem.fmt != Integer.MAX_VALUE)
+            if (spItem.fmt != Integer.MAX_VALUE)
               n = Integer.parseInt(text, 16);
           }
           switch (spItem.fmt) {
@@ -226,11 +230,11 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
           }
         } else
           item.setValue(text);
-        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(imm != null)
+        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null)
           imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         mActivity.progressShow();
-        if(!mActivity.getGattCallback().writeCharacteristic(item)) {
+        if (!mActivity.getGattCallback().writeCharacteristic(item)) {
           mActivity.progressDismiss();
           UIHelper.snackInfo(mActivity, getString(R.string.error_write_characteristic));
         }
@@ -257,7 +261,8 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
         .setIcon(R.mipmap.ic_launcher)
         .setTitle(title)
         .setPositiveButton(android.R.string.yes, null)
-        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> { });
+        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+        });
     LayoutInflater factory = LayoutInflater.from(c);
     final ViewGroup nullParent = null;
     builder.setView(factory.inflate(contentId, nullParent));
@@ -266,7 +271,7 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
     TextInputEditText et = dialog.findViewById(R.id.editText);
     TextInputLayout layout = dialog.findViewById(R.id.editTextLayout);
     AppCompatSpinner spFormat = dialog.findViewById(R.id.spFormat);
-    if(spFormat != null) {
+    if (spFormat != null) {
       List<Item> list = new ArrayList<>();
       list.add(new Item("string", Integer.MIN_VALUE));
       list.add(new Item("uint8[]", Integer.MAX_VALUE));
@@ -282,8 +287,8 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
       spFormat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-          Item item = (Item)spFormat.getSelectedItem();
-          if(layout != null && item != null) {
+          Item item = (Item) spFormat.getSelectedItem();
+          if (layout != null && item != null) {
             switch (item.fmt) {
               case Integer.MIN_VALUE:
                 layout.setHint(getString(R.string.value_hint));
@@ -297,12 +302,13 @@ public class TabFragmentDetails extends GenericTabFragment  implements TabFragme
             }
           }
         }
+
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
         }
       });
     }
-    if(et != null) {
+    if (et != null) {
       et.setText("");
       et.setOnEditorActionListener((v, actionId, event) -> {
         if (actionId == EditorInfo.IME_ACTION_DONE) {

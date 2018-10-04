@@ -23,13 +23,14 @@ import fr.ralala.bleconnector.fragments.tabs.TabFragmentDetails;
 import fr.ralala.bleconnector.fragments.tabs.TabFragmentScan;
 
 /**
- *******************************************************************************
+ * ******************************************************************************
  * <p><b>Project BleConnector</b><br/>
  * Devices fragment
  * </p>
- * @author Keidan
  *
- *******************************************************************************
+ * @author Keidan
+ * <p>
+ * ******************************************************************************
  */
 public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeListener {
   private static final int SCAN_PAGE_INDEX = 0;
@@ -52,7 +53,7 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    mActivity = (MainActivity)getActivity();
+    mActivity = (MainActivity) getActivity();
     assert mActivity != null;
     View root = inflater.inflate(R.layout.fragment_devices, container, false);
 
@@ -95,7 +96,7 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
     oldPage = SCAN_PAGE_INDEX;
     mViewPager.setCurrentItem(SCAN_PAGE_INDEX);
     //mDevicesViewPagerAdapter.removeFragment(DETAILS_PAGE_INDEX);
-    if(close)
+    if (close)
       mActivity.closeGATT();
   }
 
@@ -113,7 +114,7 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
    * Aborts the current operation.
    */
   public void abortProcess() {
-    for(GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
+    for (GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
       fragment.abortProcess();
   }
 
@@ -121,7 +122,7 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
    * Called when the services are discovered.
    */
   public void notifyServicesDiscovered() {
-    for(GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
+    for (GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
       fragment.notifyServicesDiscovered();
   }
 
@@ -129,10 +130,10 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
    * Requests for clear.
    */
   public void requestClear() {
-    for(GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
+    for (GenericTabFragment fragment : mDevicesViewPagerAdapter.getFragments())
       try {
         fragment.requestClearUI();
-      } catch(Exception e) {
+      } catch (Exception e) {
         Log.e(getClass().getSimpleName(), "Exception: " + e.getMessage(), e);
       }
   }
@@ -155,10 +156,10 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
       case DETAILS_PAGE_INDEX: {
         BluetoothGatt gatt = mActivity.getBluetoothGatt();
         boolean visible = gatt != null;
-        if(visible) {
+        if (visible) {
           BluetoothDevice bd = gatt.getDevice();
           String name = bd.getName();
-          if(name != null && !name.isEmpty())
+          if (name != null && !name.isEmpty())
             mActivity.setSubTitle(name);
           else
             mActivity.setSubTitle(gatt.getDevice().getAddress());
@@ -184,8 +185,8 @@ public class DevicesFragment extends Fragment implements ViewPager.OnPageChangeL
   @Override
   public void onPageSelected(int position) {
     updateMenuVisibility(position);
-    if(position != oldPage) {
-      if(mDevicesViewPagerAdapter.getItem(oldPage).isLocked()) {
+    if (position != oldPage) {
+      if (mDevicesViewPagerAdapter.getItem(oldPage).isLocked()) {
         mViewPager.setCurrentItem(oldPage);
         return;
       }

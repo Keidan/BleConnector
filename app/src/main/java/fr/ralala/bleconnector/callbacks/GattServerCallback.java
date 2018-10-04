@@ -46,23 +46,25 @@ public class GattServerCallback extends BluetoothGattServerCallback {
   }
 
   public GattServerCallback() {
-    for(GenericService service : mServices)
+    for (GenericService service : mServices)
       service.setRegisteredDevices(mRegisteredDevices);
   }
 
 
   /**
    * Set the reference to the BluetoothGattServer object.
+   *
    * @param gattServer BluetoothGattServer
    */
   public void setGattServer(BluetoothGattServer gattServer) {
     mGattServer = gattServer;
-    for(GenericService service : mServices)
+    for (GenericService service : mServices)
       service.setGattServer(mGattServer);
   }
 
   /**
    * Returns a generic service.
+   *
    * @param type Service index.
    * @return GenericService
    */
@@ -72,6 +74,7 @@ public class GattServerCallback extends BluetoothGattServerCallback {
 
   /**
    * Returns the list a generic services.
+   *
    * @return List<GenericService>
    */
   public List<GenericService> getServices() {
@@ -80,8 +83,9 @@ public class GattServerCallback extends BluetoothGattServerCallback {
 
   /**
    * Callback indicating when a remote device has been connected or disconnected.
-   * @param device Remote device that has been connected or disconnected.
-   * @param status Status of the connect or disconnect operation.
+   *
+   * @param device   Remote device that has been connected or disconnected.
+   * @param status   Status of the connect or disconnect operation.
    * @param newState Returns the new connection state. Can be one of STATE_DISCONNECTED or STATE_CONNECTED.
    */
   @Override
@@ -97,16 +101,17 @@ public class GattServerCallback extends BluetoothGattServerCallback {
 
   /**
    * A remote client has requested to read a local characteristic.
-   * @param device The remote device that has requested the read operation.
-   * @param requestId The Id of the request.
-   * @param offset Offset into the value of the characteristic.
+   *
+   * @param device         The remote device that has requested the read operation.
+   * @param requestId      The Id of the request.
+   * @param offset         Offset into the value of the characteristic.
    * @param characteristic Characteristic to be read.
    */
   @Override
   public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
 
-    for(GenericService service : mServices)
-      if(service.isRegistered() && service.onProcessCharacteristicReadRequest(device, requestId, characteristic)) {
+    for (GenericService service : mServices)
+      if (service.isRegistered() && service.onProcessCharacteristicReadRequest(device, requestId, characteristic)) {
         return;
       }
     mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_FAILURE, 0, null);
@@ -114,9 +119,10 @@ public class GattServerCallback extends BluetoothGattServerCallback {
 
   /**
    * A remote client has requested to read a local descriptor.
-   * @param device The remote device that has requested the read operation.
-   * @param requestId The Id of the request.
-   * @param offset Offset into the value of the characteristic.
+   *
+   * @param device     The remote device that has requested the read operation.
+   * @param requestId  The Id of the request.
+   * @param offset     Offset into the value of the characteristic.
    * @param descriptor Descriptor to be read.
    */
   @Override
@@ -141,13 +147,14 @@ public class GattServerCallback extends BluetoothGattServerCallback {
 
   /**
    * A remote client has requested to write to a local descriptor.
-   * @param device The remote device that has requested the write operation.
-   * @param requestId The Id of the request.
-   * @param descriptor Descriptor to be written to..
-   * @param preparedWrite True, if this write operation should be queued for later execution.
+   *
+   * @param device         The remote device that has requested the write operation.
+   * @param requestId      The Id of the request.
+   * @param descriptor     Descriptor to be written to..
+   * @param preparedWrite  True, if this write operation should be queued for later execution.
    * @param responseNeeded True, if the remote device requires a response.
-   * @param offset The offset given for the value.
-   * @param value The value the client wants to assign to the descriptor.
+   * @param offset         The offset given for the value.
+   * @param value          The value the client wants to assign to the descriptor.
    */
   @Override
   public void onDescriptorWriteRequest(BluetoothDevice device, int requestId,
@@ -183,11 +190,12 @@ public class GattServerCallback extends BluetoothGattServerCallback {
         CLIENT_DESCRIPTION, (BluetoothGattDescriptor.PERMISSION_READ | BluetoothGattDescriptor.PERMISSION_WRITE));
     try {
       descriptor.setValue(defaultValue.getBytes("UTF-8"));
-    } catch (Exception e){
+    } catch (Exception e) {
       Log.w(GattServerCallback.class.getSimpleName(), "Exception: " + e.getMessage(), e);
     }
     return descriptor;
   }
+
   public static BluetoothGattDescriptor getClientCharacteristicConfigurationDescriptor() {
     BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(
         CLIENT_CONFIG, (BluetoothGattDescriptor.PERMISSION_READ | BluetoothGattDescriptor.PERMISSION_WRITE));

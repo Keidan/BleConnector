@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/table"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-    android:paddingEnd="0dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:stretchColumns="1"
-    android:background="@drawable/list_color_selector">
-    <TableRow
-        android:layout_marginTop="5dp">
-        <TextView
-            android:layout_span="2"
-            android:id="@+id/tvName"
-            android:textStyle="bold"
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:singleLine="false"
-            android:textAlignment="viewStart"/>
-    </TableRow>
-    <TableRow
-        android:layout_marginBottom="5dp">
-        <TextView
-            android:text="@string/uuid"
-            android:textStyle="italic"
-            android:textColor="@color/textColorDisabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/tvUUID"
-            android:textStyle="italic"
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:singleLine="false"
-            android:textAlignment="viewStart"/>
-    </TableRow>
+  android:id="@+id/table"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/list_color_selector"
+  android:paddingBottom="10dp"
+  android:paddingEnd="0dp"
+  android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+  android:paddingTop="10dp"
+  android:stretchColumns="1">
+
+  <TableRow android:layout_marginTop="5dp">
+
+    <TextView
+      android:id="@+id/tvName"
+      android:layout_width="1dp"
+      android:layout_height="wrap_content"
+      android:layout_span="2"
+      android:singleLine="false"
+      android:textAlignment="viewStart"
+      android:textStyle="bold" />
+  </TableRow>
+
+  <TableRow android:layout_marginBottom="5dp">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/uuid"
+      android:textColor="@color/textColorDisabled"
+      android:textStyle="italic" />
+
+    <TextView
+      android:id="@+id/tvUUID"
+      android:layout_width="1dp"
+      android:layout_height="wrap_content"
+      android:singleLine="false"
+      android:textAlignment="viewStart"
+      android:textStyle="italic" />
+  </TableRow>
 </TableLayout>
