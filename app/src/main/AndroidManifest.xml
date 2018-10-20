@@ -12,6 +12,7 @@
     android:required="true" />
 
   <application
+    android:testOnly="false"
     android:name=".BleConnectorApplication"
     android:allowBackup="true"
     android:fullBackupContent="@xml/backup_rules"
